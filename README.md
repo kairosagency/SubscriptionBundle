@@ -1,41 +1,64 @@
-# Zoho invoice connector bundle
+# Kairos subscription bundle
 
-This php 5.4+ bundle is aimed at easing the integration of zoho invoice api in a symfony2 app.
+This php 5.4+ bundle is aimed at easing the integration of subscription payment in a symfony2 app.
 
-It currently handles, contacts / customers, items and invoices.
+It currently handles braintree suscription platform, but integrating other such as paymill should be really easy.
 
-## Bundle philosophy
+## Whats does this bundle do ?
 
-This bundle was create to delegate our app invoice management to zoho invoice.
-We wanted to connect stuff from our backoffice to zoho invoice for example :
-* our users are connected to zoho contacts
-* our plans are connected to zoho items
+*Create your entities easily*
+This bundle include base classes that will help you manage your subscriptions : Plan, Customer, Subscription, Credit card, transaction.
+these base classes includes all the information useful to communicate with the remote service.
 
-In order to achieve that we built a collection of traits that include all the needed elements in your local database
-and implemented lifecycle events to synchronize local object with zoho remote objects.
+*Easy syncing with remote service*
+Some entities will need to be synced with remote service : customer and plan. That's why this bundle include a special
+listener that is in charge of synchronizing your local entities with remote entities.
 
-When you'll persist a connected entity (eg: an user), the bundle will make an api call to create a remote object (eg : a contact) on zoho side,
-then it will get the zoho object id and store this reference in your database.
+*Webhooks*
+This bundle provides also webhook integration and plug webhook events to symfony2 event dispatcher.
+You can get a list of all events in the "KairosSubscriptionEvents" class.
 
-Each time you'll make changes to your entity, it will be synced with zoho.
-When an api call fails, the error messages are logged as error in your logs and the corresponding entity
-has a "synced" flag set to false (if the api call is successful, the flag is set tu true).
+*Payment form*
+This bundle integrates encrypted payment form provided by braintree. It should be easy to integrate other payment form methods.
 
 ## Bundle usage
 
 
 ### Bundle setup
 
-Add first in your config.yml these informations :
+Add first in your config.yml these information :
+Entity classes are important, don't forget them !
 
 ```
-kairos_zoho_invoice_connector:
-    auth_token: your auth token (mandatory)
-    organization_id: your org id (mandatory)
-    default_tax_id: default tax id (optional)
+kairos_subscription:
+    classes:
+        customer:       Acme\SubscriptionBundle\Entity\Customer
+        plan:           Acme\SubscriptionBundle\Entity\Plan
+        subscription:   Acme\SubscriptionBundle\Entity\Subscription
+        credit_card:    Acme\SubscriptionBundle\Entity\CreditCard
+        transaction:    Acme\SubscriptionBundle\Entity\Transaction
+    adapter:
+        braintree:
+            environment:                  env
+            merchant_id:                  merchant_id
+            public_key:                   public_key
+            private_key:                  private_key
+            client_side_encryption_key:   cse_key
 ```
 
-Then add your bundle in your AppKernel.php
+For the time being, only braintree subscription is provided but other providers can be easily added.
+The subscription service used is autiomatically selected when set-up in the config.
+
+
+then add the route to your routing.yml :
+```
+kairos_subscription:
+    resource: "@KairosSubscriptionBundle/Resources/config/routing.xml"
+```
+The webhook url is : http://yourwebsite.com/subscription/webhook
+
+
+Finaly add your bundle in your AppKernel.php
 
 ```php
 class AppKernel extends Kernel
@@ -44,7 +67,7 @@ class AppKernel extends Kernel
     {
         $bundles = array(
             ...
-            new Kairos\BraintreeSubscriptionBundle\KairosBraintreeSubscriptionBundle(),
+            new Kairos\SubscriptionBundle\KairosSubscriptionBundle(),
             ...
         );
     ....
@@ -55,111 +78,61 @@ class AppKernel extends Kernel
 
 ### Entities setup
 
-In your *user* entity which should correspond to your customer, add the corresponding trait :
+You've got to create 5 entities by extending your entities with the provided models :
+* customer:       Acme\SubscriptionBundle\Entity\Customer
+* plan:           Acme\SubscriptionBundle\Entity\Plan
+* subscription:   Acme\SubscriptionBundle\Entity\Subscription
+* credit card:    Acme\SubscriptionBundle\Entity\CreditCard
+* transaction:    Acme\SubscriptionBundle\Entity\Transaction
+
+For the time being you've got to create manually relation mapping between entities :
+* Customer < one to many > CreditCard
+* Customer < one to one > Subscription
+* Subscription < one to one > Plan
+* Subscription < one to many > Transaction
 
 
 ```php
 namespace Acme\AcmeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kairos\BraintreeSubscriptionBundle\Model as BraintreeSubscription;
 
 /**
- * @ORM\Table(name="user")
+ * @ORM\Table(name="customer")
  * @ORM\Entity
  */
-class User
+class Customer extends Kairos\SubscriptionBundle\Model\Customer
 {
-    use BraintreeSubscription\Contact\ContactConnector;
-
     ....
 }
 
 ```
 
+etc ...
 
-In your *product* entity which should correspond to zoho items, add the corresponding trait :
+## Twig functions
 
-
-```php
-namespace Acme\AcmeBundle\Entity;
-
-use Doctrine\ORM\Mapping as ORM;
-use Kairos\BraintreeSubscriptionBundle\Model as BraintreeSubscription;
-
-/**
- * @ORM\Table(name="product")
- * @ORM\Entity
- */
-class Product
-{
-    use BraintreeSubscription\Item\ItemConnector;
-
-    ....
-}
+If you want to use payment form js lib provided by Braintree, you've got to register this service as a global variable :
 
 ```
-
-
-In your *invoice* entity which should correspond to zoho invoices, add the corresponding trait :
-
-
-```php
-namespace Acme\AcmeBundle\Entity;
-
-use Doctrine\ORM\Mapping as ORM;
-use Kairos\BraintreeSubscriptionBundle\Model as BraintreeSubscription;
-
-/**
- * @ORM\Table(name="invoice")
- * @ORM\Entity
- */
-class Invoice
-{
-    use BraintreeSubscription\Invoice\InvoiceConnector;
-
-    ....
-}
-
+twig:
+     globals:
+         kairos_subscription_js: "@kairos_subscription.twig_js_service"
 ```
 
+then you'll be able to use this function to add in your template the necessary js lib :
 
-To create an invoice :
-
-```php
-
-// get a product
-$product = .....
-
-
-// get a customer
-$user = ...
-
-// create an invoice
-$invoice  = new Invoice();
-
-$invoice
-    ->addItem(array('item_id' => $product->getZohoItemId(), 'quantity' => 1))
-    ->setZohoCustomerId($user->getZohoContactId())
-    ->addZohoContactPerson($user->getZohoContactPersonId())
-    ->setSendInvoice(true); // will send and email with the invoice to the contact person
-
-// then persist and flush
-$em->persist($invoice);
-$em->flush();
-
-```
-
-
-## Synchronization command
-
-Sometimes zoho sync will fail, so your entity will have its "synced" set to false.
-You can use symfony command "php app/console kairos:zohoinvoiceconnector:sync" to trigger a manual synchronization
-with zoho invoice api on all unsynced entities.
+ ```
+ {% autoescape false %}
+ {{ kairos_subscription_js.getScript('your form id') }}
+ {% endautoescape %}
+ ```
 
 
 ## Todo
 
 * Add tests
-* Improve Zoho Api support (through zoho invoice api client)
-* support more kind of zoho objects (recurring invoices, taxes, etc.)
+* Add more validations
+* Add more subscription adapters (paymill ...)
+* Auto register relation mapping between entities
+* Multi subscriptiona dapter support ?
