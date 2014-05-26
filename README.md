@@ -6,19 +6,23 @@ It currently handles braintree suscription platform, but integrating other such 
 
 ## Whats does this bundle do ?
 
-*Create your entities easily*
+**Create your entities easily**
+
 This bundle include base classes that will help you manage your subscriptions : Plan, Customer, Subscription, Credit card, transaction.
 these base classes includes all the information useful to communicate with the remote service.
 
-*Easy syncing with remote service*
+**Easy syncing with remote service**
+
 Some entities will need to be synced with remote service : customer and plan. That's why this bundle include a special
 listener that is in charge of synchronizing your local entities with remote entities.
 
-*Webhooks*
+**Webhooks**
+
 This bundle provides also webhook integration and plug webhook events to symfony2 event dispatcher.
 You can get a list of all events in the "KairosSubscriptionEvents" class.
 
-*Payment form*
+**Payment form**
+
 This bundle integrates encrypted payment form provided by braintree. It should be easy to integrate other payment form methods.
 
 ## Bundle usage
@@ -135,4 +139,5 @@ then you'll be able to use this function to add in your template the necessary j
 * Add more validations
 * Add more subscription adapters (paymill ...)
 * Auto register relation mapping between entities
-* Multi subscriptiona dapter support ?
+* Simplify / refactore some stuff
+* Multi subscription adapter support ?
