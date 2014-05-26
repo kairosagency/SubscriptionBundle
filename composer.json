@@ -3,7 +3,7 @@
     "type": "library",
     "license": "LGPL-3.0",
     "description": "subscription integration bundle for symfony2. This bundle is aimed at being generic and include different subscription providers.",
-    "keywords": ["subscription", "braitree", "symfony2", "bundle"],
+    "keywords": ["subscription", "payment", "subscription payment", "braintree", "symfony2", "bundle"],
     "homepage": "https://github.com/kairosagency/SubscriptionBundle",
     "authors": [
         {
