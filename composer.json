@@ -1,5 +1,5 @@
 {
-    "name": "kairos/subscriptiomnbundle",
+    "name": "kairos/subscriptionbundle",
     "type": "library",
     "license": "LGPL-3.0",
     "description": "subscription integration bundle for symfony2. This bundle is aimed at being generic and include different subscription providers.",
