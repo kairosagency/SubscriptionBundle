@@ -4,7 +4,7 @@ This php 5.4+ bundle is aimed at easing the integration of subscription payment 
 
 It currently handles braintree suscription platform, but integrating other such as paymill should be really easy.
 
-## Whats does this bundle do ?
+## What does this bundle do ?
 
 **Create your entities easily**
 
