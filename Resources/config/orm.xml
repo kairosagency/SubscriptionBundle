@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+
+    <parameters>
+        <!-- event subscribers -->
+        <parameter key="kairos_subscription.customer_subscriber.class">Kairos\SubscriptionBundle\ORM\CustomerConnectorSubscriber</parameter>
+        <parameter key="kairos_subscription.plan_subscriber.class">Kairos\SubscriptionBundle\ORM\PlanConnectorSubscriber</parameter>
+        <parameter key="kairos_subscription.subscription.manager.class">Kairos\SubscriptionBundle\Entity\Manager\SubscriptionManager</parameter>
+        <parameter key="kairos_subscription.transaction.manager.class">Kairos\SubscriptionBundle\Entity\Manager\TransactionManager</parameter>
+        <parameter key="kairos_subscription.plan.manager.class">Kairos\SubscriptionBundle\Entity\Manager\PlanManager</parameter>
+        <parameter key="kairos_subscription.customer.manager.class">Kairos\SubscriptionBundle\Entity\Manager\CustomerManager</parameter>
+    </parameters>
+
+    <services>
+
+        <service id="kairos_subscription.entity_manager" factory-service="doctrine" factory-method="getManager" class="Doctrine\ORM\EntityManager" public="false">
+            <argument>%kairos_subscription.model_manager_name%</argument>
+        </service>
+
+        <service id="kairos_subscription.customer_subscriber" class="%kairos_subscription.customer_subscriber.class%" public="false">
+            <argument type="service" id="kairos_subscription.subscription_adapter" />
+            <argument  type="service" id="logger" />
+            <tag name="doctrine.event_subscriber"/>
+        </service>
+
+        <service id="kairos_subscription.plan_subscriber" class="%kairos_subscription.plan_subscriber.class%" public="false">
+            <argument type="service" id="kairos_subscription.subscription_adapter" />
+            <argument  type="service" id="logger" />
+            <tag name="doctrine.event_subscriber"/>
+        </service>
+
+        <service id="kairos_subscription.subscription.manager" class="%kairos_subscription.subscription.manager.class%" public="true">
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%kairos_subscription.subscription.class%</argument>
+            <argument  type="service" id="service_container" />
+        </service>
+
+        <service id="kairos_subscription.transaction.manager" class="%kairos_subscription.transaction.manager.class%" public="true">
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%kairos_subscription.transaction.class%</argument>
+            <argument  type="service" id="service_container" />
+        </service>
+
+        <service id="kairos_subscription.plan.manager" class="%kairos_subscription.plan.manager.class%" public="true">
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%kairos_subscription.plan.class%</argument>
+            <argument  type="service" id="service_container" />
+        </service>
+
+        <service id="kairos_subscription.customer.manager" class="%kairos_subscription.customer.manager.class%" public="true">
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%kairos_subscription.customer.class%</argument>
+            <argument  type="service" id="service_container" />
+        </service>
+
+    </services>
+
+</container>

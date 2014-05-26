@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <mapped-superclass name="Kairos\SubscriptionBundle\Model\Customer">
+
+        <field name="subscriptionCustomerId" column="subscription_customer_id" type="string" length="255" nullable="true" />
+
+        <field name="firstName" column="first_name" type="string" length="255" nullable="true" />
+
+        <field name="lastName" column="last_name" type="string" length="255" nullable="true" />
+
+        <field name="companyName" column="company_name" type="string" length="255" nullable="true" />
+
+        <field name="email" column="email" type="string" length="255" nullable="true" />
+
+        <field name="website" column="website" type="string" length="255" nullable="true" />
+
+        <field name="contactPhone" column="contact_phone" type="string" length="255" nullable="true" />
+
+        <field name="contactMobile" column="contact_mobile" type="string" length="255" nullable="true" />
+
+        <field name="billingStreet" column="billing_street" type="string" length="255" nullable="true" />
+
+        <field name="billingCity" column="billing_city" type="string" length="255" nullable="true" />
+
+        <field name="billingState" column="billing_state" type="string" length="255" nullable="true" />
+
+        <field name="billingZipcode" column="billing_zipcode" type="string" length="255" nullable="true" />
+
+        <field name="billingCountry" column="billing_country" type="string" length="255" nullable="true" />
+
+    </mapped-superclass>
+
+</doctrine-mapping>

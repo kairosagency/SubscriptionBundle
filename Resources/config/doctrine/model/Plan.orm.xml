@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <mapped-superclass name="Kairos\SubscriptionBundle\Model\Plan">
+
+        <field name="subscriptionPlanId" column="subscription_plan_id" type="string" length="255" nullable="true" />
+
+        <field name="amount" column="amount" type="float" nullable="true" />
+
+        <field name="trialPeriod" column="trial_period" type="string" length="255" nullable="true" />
+
+        <field name="trialPeriodUnit" column="trial_period_unit" type="string" length="255" nullable="true" />
+
+    </mapped-superclass>
+
+</doctrine-mapping>

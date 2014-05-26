@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <service id="kairos_subscription.payment.form.type" class="Kairos\SubscriptionBundle\Form\PaymentType">
+            <argument>%kairos_subscription.credit_card.class%</argument>
+            <argument>%kairos_subscription.adapter_name%</argument>
+            <tag name="form.type" alias="kairos_subscription_payment_form" />
+        </service>
+
+        <service id="kairos_subscription.encrypted_input.form.type" class="Kairos\SubscriptionBundle\Form\EncryptedInputType">
+            <tag name="form.type" alias="encrypted_input" />
+        </service>
+
+    </services>
+
+</container>

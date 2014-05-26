@@ -1,0 +1,27 @@
+{
+    "name": "kairos/subscriptiomnbundle",
+    "type": "library",
+    "license": "LGPL-3.0",
+    "description": "subscription integration bundle for symfony2. This bundle is aimed at being generic and include different subscription providers.",
+    "keywords": ["subscription", "braitree", "symfony2", "bundle"],
+    "homepage": "https://github.com/kairosagency/SubscriptionBundle",
+    "authors": [
+        {
+            "name": "t0k4rt",
+            "homepage": "https://github.com/t0k4rt",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "symfony/framework-bundle": ">=2.1,<=2.4",
+        "braintree/braintree_php": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~3.7"
+    },
+    "autoload": {
+        "psr-0": { "Kairos\\SubscriptionBundle": "" }
+    },
+    "target-dir": "Kairos/SubscriptionBundle"
+}
