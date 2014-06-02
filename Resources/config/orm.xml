@@ -13,6 +13,7 @@
         <parameter key="kairos_subscription.transaction.manager.class">Kairos\SubscriptionBundle\Entity\Manager\TransactionManager</parameter>
         <parameter key="kairos_subscription.plan.manager.class">Kairos\SubscriptionBundle\Entity\Manager\PlanManager</parameter>
         <parameter key="kairos_subscription.customer.manager.class">Kairos\SubscriptionBundle\Entity\Manager\CustomerManager</parameter>
+        <parameter key="kairos_subscription.credit_card.manager.class">Kairos\SubscriptionBundle\Entity\Manager\CreditCardManager</parameter>
     </parameters>
 
     <services>
@@ -58,6 +59,13 @@
             <argument type="service" id="event_dispatcher" />
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument>%kairos_subscription.customer.class%</argument>
+            <argument  type="service" id="service_container" />
+        </service>
+
+        <service id="kairos_subscription.credit_card.manager" class="%kairos_subscription.credit_card.manager.class%" public="true">
+            <argument type="service" id="event_dispatcher" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%kairos_subscription.credit_card.class%</argument>
             <argument  type="service" id="service_container" />
         </service>
 
