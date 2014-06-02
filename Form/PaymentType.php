@@ -23,7 +23,11 @@ class PaymentType extends AbstractType
                 ->add('cvv', 'encrypted_input', array('required' => false));
 
         $builder
-            ->add('expiration_date', 'text')
+            ->add('expiration_date', 'text', array(
+                    'attr' => array(
+                        'placeholder' => 'MM/YY'
+                    )
+                ))
             ->add('cardholder_name', 'text')
             ->add('submit', 'submitbtn')
         ;
