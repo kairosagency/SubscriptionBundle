@@ -96,4 +96,11 @@ interface PlanInterface
      * @return string
      */
     public function getTrialPeriodUnit();
+
+    /**
+     * Get trial period interval
+     *
+     * @return string
+     */
+    public function getTrialPeriodInterval();
 }

@@ -174,4 +174,14 @@ abstract class Plan extends Synced implements PlanInterface
     {
         return $this->trialPeriodUnit;
     }
+
+    /**
+     * Get trial period interval
+     *
+     * @return string
+     */
+    public function getTrialPeriodInterval()
+    {
+        return new \DateInterval('P'.$this->getTrialPeriod().$this->getTrialPeriodInterval());
+    }
 }
