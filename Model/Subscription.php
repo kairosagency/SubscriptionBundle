@@ -4,11 +4,11 @@ Namespace Kairos\SubscriptionBundle\Model;
 
 abstract class Subscription extends Synced implements SubscriptionInterface
 {
-    CONST ACTIVE    = 'Active';
-    CONST CANCELED  = 'Canceled';
-    CONST EXPIRED   = 'Expired';
-    CONST PAST_DUE  = 'Past Due';
-    CONST PENDING   = 'Pending';
+    CONST ACTIVE        = 'Active';
+    CONST CANCELED      = 'Canceled';
+    CONST EXPIRED       = 'Expired';
+    CONST PAST_DUE      = 'Past Due';
+    CONST PENDING       = 'Pending';
 
     /**
      * @var integer

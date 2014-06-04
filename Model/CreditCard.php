@@ -48,6 +48,12 @@ abstract class CreditCard extends Synced implements CreditCardInterface
     protected $cardholderName;
 
     /**
+     * @var boolean
+     *
+     */
+    protected $default;
+
+    /**
      * Get id
      *
      * @return integer
@@ -194,5 +200,28 @@ abstract class CreditCard extends Synced implements CreditCardInterface
     public function getCardholderName()
     {
         return $this->cardholderName;
+    }
+
+    /**
+     * Set default
+     *
+     * @param $default
+     * @return $this
+     */
+    public function setDefault($default)
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
+    /**
+     * Get default
+     *
+     * @return boolean
+     */
+    public function isDefault()
+    {
+        return $this->default;
     }
 } 
