@@ -149,6 +149,7 @@ abstract class Customer extends Synced implements CustomerInterface
     public function setSubscription(\Kairos\SubscriptionBundle\Model\SubscriptionInterface $subscription)
     {
         $this->subscription = $subscription;
+        $subscription->setCustomer($this);
 
         return $this;
     }
