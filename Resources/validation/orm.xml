@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping
+        http://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+
+    <class name="Kairos\SubscriptionBundle\Model\Customer">
+
+        <property name="firstname">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
+            </constraint>
+        </property>
+
+        <property name="lastname">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
+            </constraint>
+        </property>
+
+        <property name="email">
+            <constraint name="Email">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
+            </constraint>
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
+            </constraint>
+        </property>
+
+        <property name="billingStreet">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
+            </constraint>
+        </property>
+
+        <property name="billingCity">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
+            </constraint>
+        </property>
+
+        <property name="billingCountry">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
+            </constraint>
+        </property>
+
+        <property name="billingZipcode">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
+            </constraint>
+        </property>
+    </class>
+</constraint-mapping>
+
+
