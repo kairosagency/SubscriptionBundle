@@ -6,10 +6,11 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Kairos\SubscriptionBundle\DependencyInjection\Compiler\RegisterMappingsPass;
-use Kairos\SubscriptionBundle\DependencyInjection\Compiler\EntityDefinitionPass;
+use Kairos\SubscriptionBundle\DependencyInjection\Compiler\ValidationPass;
+//use Kairos\SubscriptionBundle\DependencyInjection\Compiler\EntityDefinitionPass;
 
-/*use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
-use Doctrine\Bundle\MongoDBBundle\DependencyInjection\Compiler\DoctrineMongoDBMappingsPass;
+use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
+/*use Doctrine\Bundle\MongoDBBundle\DependencyInjection\Compiler\DoctrineMongoDBMappingsPass;
 use Doctrine\Bundle\CouchDBBundle\DependencyInjection\Compiler\DoctrineCouchDBMappingsPass;*/
 
 class KairosSubscriptionBundle extends Bundle
@@ -18,6 +19,8 @@ class KairosSubscriptionBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
+        $container->addCompilerPass(new ValidationPass());
+
         $this->addRegisterMappingsPass($container);
     }
 

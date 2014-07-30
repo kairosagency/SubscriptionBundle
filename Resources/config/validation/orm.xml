@@ -6,7 +6,7 @@
 
     <class name="Kairos\SubscriptionBundle\Model\Customer">
 
-        <property name="firstname">
+        <property name="firstName">
             <constraint name="NotBlank">
                 <option name="groups">
                     <value>subscription</value>
@@ -14,7 +14,7 @@
             </constraint>
         </property>
 
-        <property name="lastname">
+        <property name="lastName">
             <constraint name="NotBlank">
                 <option name="groups">
                     <value>subscription</value>

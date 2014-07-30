@@ -48,6 +48,7 @@ class KairosSubscriptionExtension extends Extension
         // remap config parameters to bundle parameters
         $this->remapParametersNamespaces($config, array(
                 ''          => array(
+                    'db_driver' => 'kairos_subscription.storage',
                     'model_manager_name' => 'kairos_subscription.model_manager_name',
                 ),
                 'classes'   => array(
@@ -71,7 +72,7 @@ class KairosSubscriptionExtension extends Extension
         reset($adapter);
         $adapter_name = key($adapter);
 
-        // set adaoter name in container parameters (can be usefull !)
+        // set adapter name in container parameters (can be usefull !)
         $this->container->setParameter('kairos_subscription.adapter_name', $adapter_name);
 
         // if adapter is braintree
