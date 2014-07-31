@@ -43,7 +43,7 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
             $changeset = $uow->getEntityChangeSet($entity);
 
             // we unsync only if some properties have changed
-            $keys = array('email', 'firstName', 'lastName', 'companyName', 'website');
+            $keys = array('email', 'firstName', 'lastName', 'companyName', 'billingCity', 'billingCountry', 'billingStreet');
             if($this->arrayHasKeys($changeset, $keys)) {
                 $entity->setSubscriptionSynced(false);
                 $em->persist($entity);
@@ -82,7 +82,7 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
             $em->persist($entity);
             $em->flush();
         }
-        // in case the object was not created on zoho side
+        // in case the object was not already created remotely
         elseif($entity instanceof Customer && is_null($entity->getSubscriptionCustomerId())) {
             $this->postPersist($args);
         }
