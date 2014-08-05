@@ -53,8 +53,8 @@ class WebhookController extends Controller
 
             $message = \Swift_Message::newInstance()
                 ->setSubject('braintree webhook')
-                ->setFrom('assouad@kairostag.com')
-                ->setTo('alexandre.assouad@gmail.com')
+                ->setFrom('coucou@kairostag.com')
+                ->setTo('infra@kairostag.com')
                 ->setBody($result)
             ;
             $this->get('mailer')->send($message);
@@ -73,8 +73,8 @@ class WebhookController extends Controller
         else if($request->isMethod('GET')) {
             $message = \Swift_Message::newInstance()
                 ->setSubject('braintree webhook')
-                ->setFrom('faule@kairostag.com')
-                ->setTo('assouad@kairosagency.com')
+                ->setFrom('coucou@kairostag.com')
+                ->setTo('infra@kairostag.com')
                 ->setBody('webhookcheck')
             ;
             $this->get('mailer')->send($message);
