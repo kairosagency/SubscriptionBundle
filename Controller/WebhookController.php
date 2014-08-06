@@ -29,27 +29,36 @@ class WebhookController extends Controller
 
             $webhookNotification = $subscriptionAdapter->parseWebhook($request);
 
+            $subscriptions = $this->get('kairos_subscription.subscription.manager')->findBySubscriptionId($webhookNotification->subscription->id);
+
 
             // todo : keep that for testing but then delete it
             // debug webhook result
             ob_start();
+            echo "subscription id";
+            echo chr(13);
             var_dump($webhookNotification->subscription->id);
             echo chr(13).chr(13).chr(13);
+            echo "notification type";
+            echo chr(13);
             var_dump($webhookNotification->kind);
             echo chr(13).chr(13).chr(13);
+            echo "Transction infos";
+            echo chr(13);
             var_dump($webhookNotification->subscription->transactions);
             $result = ob_get_clean();
-            $this->get('logger')->info($result);
 
+            if(count($subscriptions) > 0) {
+                $result .= "Subscription id" . chr(13) . $subscriptions[0]->getId();
+            }
+
+            $this->get('logger')->info($result);
             $message = \Swift_Message::newInstance()
                 ->setSubject('braintree webhook')
                 ->setFrom('coucou@kairostag.com')
                 ->setTo('infra@kairostag.com')
-                ->setBody($result)
-            ;
+                ->setBody($result);
             $this->get('mailer')->send($message);
-
-            $subscriptions = $this->get('kairos_subscription.subscription.manager')->findBySubscriptionId($webhookNotification->subscription->id);
 
             // should send 200 instead of exception since the webhook will continue being sent.
             if(count($subscriptions) == 0)
@@ -59,7 +68,6 @@ class WebhookController extends Controller
             $subscription = $subscriptions[0];
 
             $eventName = $subscriptionAdapter->getSubscriptionEvent($subscription, $webhookNotification);
-
 
             if($eventName) {
                 $dispatcher = $this->get('event_dispatcher');
