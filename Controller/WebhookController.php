@@ -75,13 +75,7 @@ class WebhookController extends Controller
                 ->setBody($result);
             $this->get('mailer')->send($message);
 
-
-
-
-
-
             return new Response('nok', 400);
-
         }
         else if($request->isMethod('GET')) {
             $message = \Swift_Message::newInstance()

@@ -32,23 +32,26 @@ class SubscriptionListener {
 
         if($webhookContent) {
             $transactionRefl = new \ReflectionClass($this->transactionClass);
-            $transaction = $transactionRefl->newInstance();
 
-            // should create transaction from webhook content
-            $transaction
-                ->setSubscriptionTransactionId($webhookContent->subscription->transactions[0]->id)
-                ->setSubscriptionTransactionStatus($webhookContent->subscription->transactions[0]->status);
+            foreach($webhookContent->subscription->transactions AS $transaction) {
+                $transaction = $transactionRefl->newInstance();
+                // should create transaction from webhook content
+                $transaction
+                    ->setSubscriptionTransactionId($transaction->id)
+                    ->setSubscriptionTransactionStatus($transaction->status);
 
-            $subscription->addTransaction($transaction);
-            $this->em->persist($transaction);
-            $this->em->flush();
+                $subscription->addTransaction($transaction);
+                $this->em->persist($transaction);
+                $this->em->flush();
+            }
+
             $event->setSubscription($subscription);
         }
     }
 
     public function onChargeUnsuccesfull(SubscriptionEvent $event)
     {
-
+        
     }
 
     public function onCancel(SubscriptionEvent $event)
