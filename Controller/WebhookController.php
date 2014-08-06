@@ -26,11 +26,11 @@ class WebhookController extends Controller
         $subscriptionAdapter = $this->get('kairos_subscription.subscription_adapter');
 
         if($request->isMethod('POST')) {
-
+            // in case
+            sleep(2);
             $webhookNotification = $subscriptionAdapter->parseWebhook($request);
 
             $subscriptions = $this->get('kairos_subscription.subscription.manager')->findBySubscriptionId($webhookNotification->subscription->id);
-
 
             // todo : keep that for testing but then delete it
             // debug webhook result
