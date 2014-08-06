@@ -52,6 +52,8 @@ class WebhookController extends Controller
                 $result .= "Subscription id" . chr(13) . $subscriptions[0]->getId();
             }
 
+            $result .= chr(13)."fin";
+
             $this->get('logger')->info($result);
             $message = \Swift_Message::newInstance()
                 ->setSubject('braintree webhook')
