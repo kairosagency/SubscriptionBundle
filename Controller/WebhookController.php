@@ -29,6 +29,26 @@ class WebhookController extends Controller
 
             $webhookNotification = $subscriptionAdapter->parseWebhook($request);
 
+
+            // todo : keep that for testing but then delete it
+            // debug webhook result
+            ob_start();
+            var_dump($webhookNotification->subscription->id);
+            echo chr(13).chr(13).chr(13);
+            var_dump($webhookNotification->kind);
+            echo chr(13).chr(13).chr(13);
+            var_dump($webhookNotification->subscription->transactions);
+            $result = ob_get_clean();
+            $this->get('logger')->info($result);
+
+            $message = \Swift_Message::newInstance()
+                ->setSubject('braintree webhook')
+                ->setFrom('coucou@kairostag.com')
+                ->setTo('infra@kairostag.com')
+                ->setBody($result)
+            ;
+            $this->get('mailer')->send($message);
+
             $subscriptions = $this->get('kairos_subscription.subscription.manager')->findBySubscriptionId($webhookNotification->subscription->id);
 
             // should send 200 instead of exception since the webhook will continue being sent.
@@ -40,24 +60,6 @@ class WebhookController extends Controller
 
             $eventName = $subscriptionAdapter->getSubscriptionEvent($subscription, $webhookNotification);
 
-            // todo : keep that for testing but then delete it
-            // debug webhook result
-            ob_start();
-            var_dump($webhookNotification->kind);
-            echo chr(13).chr(13).chr(13);
-            var_dump($webhookNotification->subscription->transactions);
-            echo chr(13).chr(13).chr(13);
-            var_dump($eventName);
-            $result = ob_get_clean();
-            $this->get('logger')->info($result);
-
-            $message = \Swift_Message::newInstance()
-                ->setSubject('braintree webhook')
-                ->setFrom('coucou@kairostag.com')
-                ->setTo('infra@kairostag.com')
-                ->setBody($result)
-            ;
-            $this->get('mailer')->send($message);
 
             if($eventName) {
                 $dispatcher = $this->get('event_dispatcher');
