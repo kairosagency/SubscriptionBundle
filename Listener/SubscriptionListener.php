@@ -27,31 +27,17 @@ class SubscriptionListener {
 
     public function onChargeSuccesfull(SubscriptionEvent $event)
     {
-        $subscription = $event->getSubscription();
-        $webhookContent = $event->getWebhookContent();
 
-        if($webhookContent) {
-            $transactionRefl = new \ReflectionClass($this->transactionClass);
-
-            foreach($webhookContent->subscription->transactions AS $transaction) {
-                $transaction = $transactionRefl->newInstance();
-                // should create transaction from webhook content
-                $transaction
-                    ->setSubscriptionTransactionId($transaction->id)
-                    ->setSubscriptionTransactionStatus($transaction->status);
-
-                $subscription->addTransaction($transaction);
-                $this->em->persist($transaction);
-                $this->em->flush();
-            }
-
-            $event->setSubscription($subscription);
-        }
     }
 
     public function onChargeUnsuccesfull(SubscriptionEvent $event)
     {
-        
+
+    }
+
+    public function onPastDue(SubscriptionEvent $event)
+    {
+
     }
 
     public function onCancel(SubscriptionEvent $event)
@@ -69,7 +55,7 @@ class SubscriptionListener {
 
     }
 
-    public function onTrialEnded(SubscriptionEvent $event)
+    public function onTrialEnd(SubscriptionEvent $event)
     {
 
     }

@@ -25,5 +25,5 @@ final class KairosSubscriptionEvents
 
     const SUBSCRIPTION_TRIAL_ENDED = 'kairos_subscription.event.subscription.trial_ended';
 
-    const SUBSCRIPTION_PAST_DUE = 'kairos_subscription.event.subscription.pas_due';
+    const SUBSCRIPTION_PAST_DUE = 'kairos_subscription.event.subscription.past_due';
 }

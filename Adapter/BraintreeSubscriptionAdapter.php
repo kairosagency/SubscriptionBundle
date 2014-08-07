@@ -152,7 +152,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
     public function deleteCustomer(Customer $customer)
     {
-
+        return Braintree_Customer::delete($customer->getSubscriptionCustomerId());
     }
 
 
@@ -243,13 +243,18 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                     ->setSubscriptionSynced(true)
                     ->setStatus($result->subscription->status);
 
-                $transactionRefl = new \ReflectionClass($this->transactionClass);
-                $transaction = $transactionRefl->newInstance();
-                $transaction
-                    ->setSubscriptionTransactionId($result->subscription->transactions[0]->id)
-                    ->setSubscriptionTransactionStatus($result->subscription->transactions[0]->status);
+                $transactionRefl = new \ReflectionClass($result->subscription->transactions);
 
-                $subscription->addTransaction($transaction);
+                foreach($result->subscription->transactions AS $transactionResult) {
+                    $transaction = $transactionRefl->newInstance();
+                    // should create transaction from webhook content
+                    $transaction
+                        ->setSubscriptionTransactionId($transactionResult->id)
+                        ->setSubscriptionTransactionStatus($transactionResult->status);
+
+                    $subscription->addTransaction($transaction);
+                }
+
             }
             else
                 $subscription->setErrors($result->errors->deepAll());
