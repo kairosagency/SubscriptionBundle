@@ -243,7 +243,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                     ->setSubscriptionSynced(true)
                     ->setStatus($result->subscription->status);
 
-                $transactionRefl = new \ReflectionClass($result->subscription->transactions);
+                $transactionRefl = new \ReflectionClass($this->transactionClass);
 
                 foreach($result->subscription->transactions AS $transactionResult) {
                     $transaction = $transactionRefl->newInstance();
