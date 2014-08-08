@@ -26,11 +26,19 @@ class WebhookController extends Controller
         $subscriptionAdapter = $this->get('kairos_subscription.subscription_adapter');
 
         if($request->isMethod('POST')) {
-            // wait a little bit, can be usefull in some cases to be sure that subscription id has been saved
-            sleep(3);
+
             $webhookNotification = $subscriptionAdapter->parseWebhook($request);
 
             $subscriptions = $this->get('kairos_subscription.subscription.manager')->findBySubscriptionId($webhookNotification->subscription->id);
+
+            // wait a little bit of time and
+            // try 3 times to find the subscription given the id
+            $tries = 0;
+            while(count($subscriptions) == 0 && $tries < 2) {
+                sleep(3);
+                $subscriptions = $this->get('kairos_subscription.subscription.manager')->findBySubscriptionId($webhookNotification->subscription->id);
+                $tries++;
+            }
 
             // todo : keep that for testing but then delete it
             // debug webhook result
@@ -43,7 +51,7 @@ class WebhookController extends Controller
             echo chr(13);
             var_dump($webhookNotification->kind);
             echo chr(13).chr(13).chr(13);
-            echo "Transction infos";
+            echo "Transaction infos";
             echo chr(13);
             var_dump($webhookNotification->subscription->transactions);
             $result = ob_get_clean();
@@ -63,6 +71,10 @@ class WebhookController extends Controller
                     $dispatcher->dispatch($eventName, $event);
                     return new Response('ok', 200);
                 }
+            }
+            else {
+                $this->get('logger')->error('[subscription bundle webhook] Could not find any subscription with id ' . $webhookNotification->subscription->id);
+                return new Response('nok', 200);
             }
 
             $result .= chr(13)."fin";
