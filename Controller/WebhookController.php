@@ -56,11 +56,21 @@ class WebhookController extends Controller
             var_dump($webhookNotification->subscription->transactions);
             $result = ob_get_clean();
 
+
+
             if(count($subscriptions) > 0) {
 
                 $subscription = $subscriptions[0];
 
                 $result .= "Subscription id" . chr(13) . $subscription->getId();
+                $result .= chr(13)."fin";
+                $this->get('logger')->info($result);
+                $message = \Swift_Message::newInstance()
+                    ->setSubject('braintree webhook')
+                    ->setFrom('coucou@kairostag.com')
+                    ->setTo('infra@kairostag.com')
+                    ->setBody($result);
+                $this->get('mailer')->send($message);
 
                 $eventName = $subscriptionAdapter->getSubscriptionEvent($subscription, $webhookNotification);
 
@@ -73,19 +83,19 @@ class WebhookController extends Controller
                 }
             }
             else {
+                $result .= chr(13)."fin";
+
+                $this->get('logger')->info($result);
+                $message = \Swift_Message::newInstance()
+                    ->setSubject('braintree webhook')
+                    ->setFrom('coucou@kairostag.com')
+                    ->setTo('infra@kairostag.com')
+                    ->setBody($result);
+                $this->get('mailer')->send($message);
+
                 $this->get('logger')->error('[subscription bundle webhook] Could not find any subscription with id ' . $webhookNotification->subscription->id);
                 return new Response('nok', 200);
             }
-
-            $result .= chr(13)."fin";
-
-            $this->get('logger')->info($result);
-            $message = \Swift_Message::newInstance()
-                ->setSubject('braintree webhook')
-                ->setFrom('coucou@kairostag.com')
-                ->setTo('infra@kairostag.com')
-                ->setBody($result);
-            $this->get('mailer')->send($message);
 
             return new Response('nok', 400);
         }
