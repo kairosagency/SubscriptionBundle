@@ -59,6 +59,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      */
     public function createPlan(Plan $plan)
     {
+        $plan->setSubscriptionSynced(true);
         return $plan;
     }
 
@@ -77,6 +78,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      */
     public function updatePlan(Plan $plan)
     {
+        $plan->setSubscriptionSynced(true);
         return $plan;
     }
 

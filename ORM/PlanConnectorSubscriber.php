@@ -32,15 +32,18 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
      */
     public function preUpdate(PreUpdateEventArgs $args)
     {
-        $this->getLogger()->err('[PlanConnectorSubscriber] preUpdate');
         $entity = $args->getEntity();
-        $em  = $args->getEntityManager();
-        $classMetadata = $em->getClassMetadata(get_class($entity));
 
         if ($entity instanceof Plan) {
+            $this->getLogger()->info('[PlanConnectorSubscriber] preUpdate');
+
+            $em  = $args->getEntityManager();
+            $classMetadata = $em->getClassMetadata(get_class($entity));
             $uow = $em->getUnitOfWork();
             $changeset = $uow->getEntityChangeSet($entity);
 
+            // we unsync only if these properties have changed
+            // this will trigger a postUpdate event
             $keys = array('amount', 'trialPeriod', 'trialPeriodUnit');
             if($this->arrayHasKeys($changeset, $keys)) {
                 $entity->setSubscriptionSynced(false);
@@ -56,12 +59,13 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        $this->getLogger()->err('[PlanConnectorSubscriber] postPersist');
         $entity = $args->getEntity();
-        $em  = $args->getEntityManager();
 
         if($entity instanceof Plan) {
+            $this->getLogger()->info('[PlanConnectorSubscriber] postPersist');
+
             $this->getSubscriptionAdapter()->createPlan($entity);
+            $em  = $args->getEntityManager();
             $em->persist($entity);
             $em->flush();
         }
@@ -72,13 +76,14 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
      */
     public function postUpdate(LifecycleEventArgs $args)
     {
-        $this->getLogger()->err('[PlanConnectorSubscriber] postUpdate');
         $entity = $args->getEntity();
-        $em  = $args->getEntityManager();
 
         // can update only if entity is suported and contact id is set
         if($entity instanceof Plan && $entity->getSubscriptionPlanId() && $entity->isSubscriptionSynced() == false) {
+            $this->getLogger()->info('[PlanConnectorSubscriber] postUpdate');
+
             $this->getSubscriptionAdapter()->updatePlan($entity);
+            $em  = $args->getEntityManager();
             $em->persist($entity);
             $em->flush();
         }

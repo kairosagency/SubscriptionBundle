@@ -19,8 +19,14 @@ use Kairos\SubscriptionBundle\Adapter\SubscriptionAdapterInterface;
 
 abstract class AbstractDoctrineListener implements EventSubscriber
 {
+    /**
+     * @var \Kairos\SubscriptionBundle\Adapter\SubscriptionAdapterInterface
+     */
     private $subscriptionAdapter;
 
+    /**
+     * @var \Symfony\Bridge\Monolog\Logger
+     */
     private $logger;
 
 
@@ -30,18 +36,27 @@ abstract class AbstractDoctrineListener implements EventSubscriber
         $this->subscriptionAdapter = $subscriptionAdapter;
     }
 
+    /**
+     * @return SubscriptionAdapterInterface
+     */
     protected function getSubscriptionAdapter()
     {
         return $this->subscriptionAdapter;
     }
 
-
+    /**
+     * @return Logger
+     */
     protected function getLogger()
     {
         return $this->logger;
     }
 
-
+    /**
+     * @param array $array
+     * @param array $keys
+     * @return bool
+     */
     public function arrayHasKeys($array = array(), $keys =  array())
     {
         foreach($keys AS $key) {

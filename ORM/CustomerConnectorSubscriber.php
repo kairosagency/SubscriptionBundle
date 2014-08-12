@@ -35,14 +35,16 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
     public function preUpdate(PreUpdateEventArgs $args)
     {
         $entity = $args->getEntity();
-        $em  = $args->getEntityManager();
-        $classMetadata = $em->getClassMetadata(get_class($entity));
 
         if($entity instanceof Customer) {
+            $this->getLogger()->info('[CustomerConnectorSubscriber] preUpdate');
+            $em  = $args->getEntityManager();
+            $classMetadata = $em->getClassMetadata(get_class($entity));
             $uow = $em->getUnitOfWork();
             $changeset = $uow->getEntityChangeSet($entity);
 
-            // we unsync only if some properties have changed
+            // we unsync only if these properties have changed
+            // this will trigger a postUpdate event
             $keys = array('email', 'firstName', 'lastName', 'companyName', 'billingCity', 'billingCountry', 'billingStreet');
             if($this->arrayHasKeys($changeset, $keys)) {
                 $entity->setSubscriptionSynced(false);
@@ -59,10 +61,12 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        $em  = $args->getEntityManager();
 
         if($entity instanceof Customer) {
+            $this->getLogger()->info('[CustomerConnectorSubscriber] postPersist');
+
             $this->getSubscriptionAdapter()->createCustomer($entity);
+            $em  = $args->getEntityManager();
             $em->persist($entity);
             $em->flush();
         }
@@ -74,11 +78,13 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
     public function postUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        $em  = $args->getEntityManager();
 
         // can update only if entity is suported and contact id is set
         if($entity instanceof Customer && $entity->getSubscriptionCustomerId() && $entity->isSubscriptionSynced() == false) {
+            $this->getLogger()->info('[CustomerConnectorSubscriber] postUpdate');
+
             $this->getSubscriptionAdapter()->updateCustomer($entity);
+            $em  = $args->getEntityManager();
             $em->persist($entity);
             $em->flush();
         }
