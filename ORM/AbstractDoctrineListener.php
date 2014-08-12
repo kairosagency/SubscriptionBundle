@@ -66,5 +66,22 @@ abstract class AbstractDoctrineListener implements EventSubscriber
         return false;
     }
 
+    /**
+     * @param $em
+     * @param $uow
+     * @param $entity
+     * @param bool $newEntity
+     */
+    public function persistAndRecomputeChangeset($em, $uow, $entity, $newEntity = false) {
+        $classMetadata = $em->getClassMetadata(get_class($entity));
+        $em->persist($entity);
+        if($newEntity) {
+            $uow->computeChangeSet($classMetadata, $entity);
+        }
+        else {
+            $uow->recomputeSingleEntityChangeSet($classMetadata, $entity);
+        }
+    }
+
     abstract public function getSubscribedEvents();
 }

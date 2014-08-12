@@ -53,6 +53,39 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
         }
     }
 
+    /**
+     * @param OnFlushEventArgs $eventArgs
+     */
+    public function onFlush(OnFlushEventArgs $eventArgs)
+    {
+        $em = $eventArgs->getEntityManager();
+        $uow = $em->getUnitOfWork();
+
+        foreach ($uow->getScheduledEntityInsertions() as $entity) {
+            if($entity instanceof Plan) {
+                $this->getLogger()->info('[PlanConnectorSubscriber][onFlush] Scheduled for insertion');
+                $this->getSubscriptionAdapter()->createCustomer($entity);
+                $this->persistAndRecomputeChangeset($em, $uow, $entity, true);
+            }
+        }
+
+        foreach ($uow->getScheduledEntityUpdates() as $entity) {
+            if($entity instanceof Plan) {
+
+                $this->getLogger()->info('[PlanConnectorSubscriber][onFlush] Scheduled for updates');
+                if($entity->getSubscriptionCustomerId() && $entity->isSubscriptionSynced() == false) {
+                    $this->getSubscriptionAdapter()->updateCustomer($entity);
+                    $this->persistAndRecomputeChangeset($em, $uow, $entity);
+                }
+                // in case the object was not already created remotely
+                elseif(is_null($entity->getSubscriptionCustomerId())) {
+                    $this->getSubscriptionAdapter()->createCustomer($entity);
+                    $this->persistAndRecomputeChangeset($em, $uow, $entity);
+                }
+            }
+        }
+    }
+
 
     /**
      * @param LifecycleEventArgs $args
@@ -100,6 +133,7 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
      */
     public function getSubscribedEvents()
     {
-        return [Events::preUpdate, Events::postUpdate, Events::postPersist];
+        return [Events::preUpdate, Events::onFlush];
+        //return [Events::preUpdate, Events::postUpdate, Events::postPersist];
     }
 }
