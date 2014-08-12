@@ -65,6 +65,7 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
         foreach ($uow->getScheduledEntityInsertions() as $entity) {
             if($entity instanceof Plan) {
                 $this->getLogger()->info('[PlanConnectorSubscriber][onFlush] Scheduled for insertion');
+
                 $this->getSubscriptionAdapter()->createPlan($entity);
                 $this->persistAndRecomputeChangeset($em, $uow, $entity);
             }
@@ -72,8 +73,8 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
 
         foreach ($uow->getScheduledEntityUpdates() as $entity) {
             if($entity instanceof Plan) {
-
                 $this->getLogger()->info('[PlanConnectorSubscriber][onFlush] Scheduled for updates');
+
                 if($entity->getSubscriptionPlanId() && $entity->isSubscriptionSynced() == false) {
                     $this->getSubscriptionAdapter()->updatePlan($entity);
                     $this->persistAndRecomputeChangeset($em, $uow, $entity);

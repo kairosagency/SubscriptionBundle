@@ -16,6 +16,7 @@ use Symfony\Bridge\Monolog\Logger;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata,
     Doctrine\ORM\Event\PreUpdateEventArgs,
     Doctrine\ORM\Event\LifecycleEventArgs,
+    Doctrine\ORM\Event\OnFlushEventArgs,
     Doctrine\ORM\Events;
 
 use Kairos\SubscriptionBundle\Model\Customer;
@@ -50,6 +51,40 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
                 $entity->setSubscriptionSynced(false);
                 $em->persist($entity);
                 $uow->recomputeSingleEntityChangeSet($classMetadata, $entity);
+            }
+        }
+    }
+
+    /**
+     * @param OnFlushEventArgs $eventArgs
+     */
+    public function onFlush(OnFlushEventArgs $eventArgs)
+    {
+        $em = $eventArgs->getEntityManager();
+        $uow = $em->getUnitOfWork();
+
+        foreach ($uow->getScheduledEntityInsertions() as $entity) {
+            if($entity instanceof Customer) {
+                $this->getLogger()->info('[CustomerConnectorSubscriber][onFlush] Scheduled for insertion');
+
+                $this->getSubscriptionAdapter()->createCustomer($entity);
+                $this->persistAndRecomputeChangeset($em, $uow, $entity);
+            }
+        }
+
+        foreach ($uow->getScheduledEntityUpdates() as $entity) {
+            if($entity instanceof Customer) {
+                $this->getLogger()->info('[CustomerConnectorSubscriber][onFlush] Scheduled for updates');
+
+                if($entity->getSubscriptionCustomerId() && $entity->isSubscriptionSynced() == false) {
+                    $this->getSubscriptionAdapter()->updateCustomer($entity);
+                    $this->persistAndRecomputeChangeset($em, $uow, $entity);
+                }
+                // in case the object was not already created remotely
+                elseif(is_null($entity->getSubscriptionCustomerId())) {
+                    $this->getSubscriptionAdapter()->createCustomer($entity);
+                    $this->persistAndRecomputeChangeset($em, $uow, $entity);
+                }
             }
         }
     }
@@ -101,6 +136,7 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
      */
     public function getSubscribedEvents()
     {
-        return [Events::preUpdate, Events::postUpdate, Events::postPersist];
+        return [Events::preUpdate, Events::onFlush];
+        //return [Events::preUpdate, Events::postUpdate, Events::postPersist];
     }
 }
