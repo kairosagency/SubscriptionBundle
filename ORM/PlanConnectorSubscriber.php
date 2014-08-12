@@ -16,6 +16,7 @@ use Symfony\Bridge\Monolog\Logger;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata,
     Doctrine\ORM\Event\PreUpdateEventArgs,
     Doctrine\ORM\Event\LifecycleEventArgs,
+    Doctrine\ORM\Event\OnFlushEventArgs,
     Doctrine\ORM\Events;
 
 use Kairos\SubscriptionBundle\Model\Plan;
