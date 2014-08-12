@@ -66,7 +66,7 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
             if($entity instanceof Plan) {
                 $this->getLogger()->info('[PlanConnectorSubscriber][onFlush] Scheduled for insertion');
                 $this->getSubscriptionAdapter()->createPlan($entity);
-                $this->persistAndRecomputeChangeset($em, $uow, $entity, true);
+                $this->persistAndRecomputeChangeset($em, $uow, $entity);
             }
         }
 
