@@ -107,10 +107,14 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $customer
                     ->setSubscriptionCustomerId($result->customer->id)
                     ->setSubscriptionSynced(true);
-                $this->getLogger()->info('[Braintree][createCustomer] Sucess', array('customer id' => $customer->getSubscriptionCustomerId()), $this->serializeCustomer($customer, $options));
+                $this->getLogger()->info('[Braintree][createCustomer] Sucess',
+                    $this->serializeCustomer($customer, $options)
+                );
             }
             else {
-                $this->getLogger()->Error('[Braintree][createCustomer] Error', $result->errors->deepAll());
+                $this->getLogger()->Error('[Braintree][createCustomer] Error',
+                    $result->errors->deepAll()
+                );
                 $customer->setErrors($result->errors->deepAll());
             }
 
@@ -144,10 +148,14 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
             if ($result->success) {
                 $customer->setSubscriptionSynced(true);
-                $this->getLogger()->info('[Braintree][updateCustomer] Sucess', array('customer id' => $customer->getSubscriptionCustomerId()), $this->serializeCustomer($customer, $options));
+                $this->getLogger()->info('[Braintree][createCustomer] Sucess',
+                    array_merge(array('customer id' => $customer->getId()), $this->serializeCustomer($customer, $options))
+                );
             }
             else {
-                $this->getLogger()->error('[Braintree][updateCustomer] Error', array('customer id' => $customer->getSubscriptionCustomerId()), $result->errors->deepAll());
+                $this->getLogger()->Error('[Braintree][createCustomer] Error',
+                    array_merge(array('customer id' => $customer->getId()), $result->errors->deepAll())
+                );
                 $customer->setErrors($result->errors->deepAll());
             }
 
@@ -182,7 +190,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             if ($result->success) {
                 $creditCard->setToken($result->creditCard->token);
                 $creditCard->setSubscriptionSynced(true);
-                $this->getLogger()->info('[Braintree][createCreditCard] Sucess', array('credit card token' => $creditCard->getToken()), $this->serializeCreditCard($creditCard, $options));
+                $this->getLogger()->info('[Braintree][createCreditCard] Sucess', $this->serializeCreditCard($creditCard, $options));
             }
             else {
                 $this->getLogger()->error('[Braintree][createCreditCard] Error', $result->errors->deepAll());
@@ -218,10 +226,14 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
             if ($result->success) {
                 $creditCard->setSubscriptionSynced(true);
-                $this->getLogger()->info('[Braintree][updateCreditCard] Sucess', array('credit card token' => $creditCard->getToken()), $this->serializeCreditCard($creditCard, $options));
+                $this->getLogger()->info('[Braintree][updateCreditCard] Sucess',
+                    array_merge(array('creditcard id' => $creditCard->getId()), $this->serializeCreditCard($creditCard, $options))
+                );
             }
             else {
-                $this->getLogger()->error('[Braintree][updateCreditCard] Error', array('credit card token' => $creditCard->getToken()), $result->errors->deepAll());
+                $this->getLogger()->error('[Braintree][updateCreditCard] Error',
+                    array_merge(array('creditcard id' => $creditCard->getId()), $result->errors->deepAll())
+                );
                 $creditCard->setErrors($result->errors->deepAll());
             }
 
@@ -252,7 +264,6 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             );
 
             if($result->success) {
-                $this->getLogger()->info('[Braintree][createSubscription] Success', array('subscription id' => $subscription->getSubscriptionId()), $this->serializeSubscription($subscription, $options));
                 $subscription
                     ->setAdapterName($this->getAdapterName())
                     ->setSubscriptionId($result->subscription->id)
@@ -270,7 +281,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
                     $subscription->addTransaction($transaction);
                 }
-
+                $this->getLogger()->info('[Braintree][createSubscription] Success', $this->serializeSubscription($subscription, $options));
             }
             else {
                 $this->getLogger()->error('[Braintree][createSubscription] Error', $result->errors->deepAll());
@@ -310,10 +321,14 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $subscription
                     ->setSubscriptionSynced(true)
                     ->setStatus($result->subscription->status);
-                $this->getLogger()->info('[Braintree][updateSubscription] Sucess', array('subscription id' => $subscription->getSubscriptionId()), $this->serializeSubscription($subscription, $options));
+                $this->getLogger()->info('[Braintree][updateSubscription] Sucess',
+                    array_merge(array('subscription id' => $subscription->getId()), $this->serializeSubscription($subscription, $options))
+                );
             }
             else {
-                $this->getLogger()->error('[Braintree][updateSubscription] Error', array('subscription id' => $subscription->getSubscriptionId()), $result->errors->deepAll());
+                $this->getLogger()->error('[Braintree][updateSubscription] Error',
+                    array_merge(array('subscription id' => $subscription->getId()), $result->errors->deepAll())
+                );
                 $subscription->setErrors($result->errors->deepAll());
             }
 
@@ -339,11 +354,15 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $subscription
                     ->setSubscriptionSynced(true)
                     ->setStatus($result->subscription->status);
-                $this->getLogger()->info('[Braintree][cancelSubscription] Success', array('subscription id' => $subscription->getSubscriptionId()), $this->serializeSubscription($subscription, $options));
+                $this->getLogger()->info('[Braintree][updateSubscription] Sucess',
+                    array_merge(array('subscription id' => $subscription->getId()), $this->serializeSubscription($subscription, $options))
+                );
             }
             else {
+                $this->getLogger()->error('[Braintree][updateSubscription] Error',
+                    array_merge(array('subscription id' => $subscription->getId()), $result->errors->deepAll())
+                );
                 $subscription->setErrors($result->errors->deepAll());
-                $this->getLogger()->error('[Braintree][cancelSubscription] Error', array('subscription id' => $subscription->getSubscriptionId()), $result->errors->deepAll());
             }
 
 
