@@ -14,8 +14,6 @@ namespace Kairos\SubscriptionBundle\ORM;
 use Symfony\Bridge\Monolog\Logger;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata,
-    Doctrine\ORM\Event\PreUpdateEventArgs,
-    Doctrine\ORM\Event\LifecycleEventArgs,
     Doctrine\ORM\Event\OnFlushEventArgs,
     Doctrine\ORM\Events;
 
@@ -29,31 +27,6 @@ use Kairos\SubscriptionBundle\Model\Customer;
  */
 class CustomerConnectorSubscriber extends AbstractDoctrineListener
 {
-
-    /**
-     * @param PreUpdateEventArgs $args
-     */
-    public function preUpdate(PreUpdateEventArgs $args)
-    {
-        $entity = $args->getEntity();
-
-        if($entity instanceof Customer) {
-            $this->getLogger()->info('[CustomerConnectorSubscriber] preUpdate');
-            $em  = $args->getEntityManager();
-            $classMetadata = $em->getClassMetadata(get_class($entity));
-            $uow = $em->getUnitOfWork();
-            $changeset = $uow->getEntityChangeSet($entity);
-
-            // we unsync only if these properties have changed
-            // this will trigger a postUpdate event
-            $keys = array('email', 'firstName', 'lastName', 'companyName', 'billingCity', 'billingCountry', 'billingStreet');
-            if($this->arrayHasKeys($changeset, $keys)) {
-                $entity->setSubscriptionSynced(false);
-                $em->persist($entity);
-                $uow->recomputeSingleEntityChangeSet($classMetadata, $entity);
-            }
-        }
-    }
 
     /**
      * @param OnFlushEventArgs $eventArgs
@@ -76,56 +49,22 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
             if($entity instanceof Customer) {
                 $this->getLogger()->info('[CustomerConnectorSubscriber][onFlush] Scheduled for updates');
 
+                $changeset = $uow->getEntityChangeSet($entity);
+                $keys = array('email', 'firstName', 'lastName', 'companyName', 'billingCity', 'billingCountry', 'billingStreet');
+                if($this->arrayHasKeys($changeset, $keys)) {
+                    $entity->setSubscriptionSynced(false);
+                }
+
                 if($entity->getSubscriptionCustomerId() && $entity->isSubscriptionSynced() == false) {
                     $this->getSubscriptionAdapter()->updateCustomer($entity);
-                    $this->persistAndRecomputeChangeset($em, $uow, $entity);
                 }
                 // in case the object was not already created remotely
                 elseif(is_null($entity->getSubscriptionCustomerId())) {
                     $this->getSubscriptionAdapter()->createCustomer($entity);
-                    $this->persistAndRecomputeChangeset($em, $uow, $entity);
                 }
+
+                $this->persistAndRecomputeChangeset($em, $uow, $entity);
             }
-        }
-    }
-
-
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function postPersist(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
-
-        if($entity instanceof Customer) {
-            $this->getLogger()->info('[CustomerConnectorSubscriber] postPersist');
-
-            $this->getSubscriptionAdapter()->createCustomer($entity);
-            $em  = $args->getEntityManager();
-            $em->persist($entity);
-            $em->flush();
-        }
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function postUpdate(LifecycleEventArgs $args)
-    {
-        $entity = $args->getEntity();
-
-        // can update only if entity is suported and contact id is set
-        if($entity instanceof Customer && $entity->getSubscriptionCustomerId() && $entity->isSubscriptionSynced() == false) {
-            $this->getLogger()->info('[CustomerConnectorSubscriber] postUpdate');
-
-            $this->getSubscriptionAdapter()->updateCustomer($entity);
-            $em  = $args->getEntityManager();
-            $em->persist($entity);
-            $em->flush();
-        }
-        // in case the object was not already created remotely
-        elseif($entity instanceof Customer && is_null($entity->getSubscriptionCustomerId())) {
-            $this->postPersist($args);
         }
     }
 
@@ -136,7 +75,6 @@ class CustomerConnectorSubscriber extends AbstractDoctrineListener
      */
     public function getSubscribedEvents()
     {
-        return [Events::preUpdate, Events::onFlush];
-        //return [Events::preUpdate, Events::postUpdate, Events::postPersist];
+        return [Events::onFlush];
     }
 }
