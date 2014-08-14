@@ -107,12 +107,15 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $customer
                     ->setSubscriptionCustomerId($result->customer->id)
                     ->setSubscriptionSynced(true);
+                $this->getLogger()->info('[Braintree][createCustomer] Sucess', $result);
             }
-            else
+            else {
+                $this->getLogger()->Error('[Braintree][createCustomer] Error', $result->errors->deepAll());
                 $customer->setErrors($result->errors->deepAll());
+            }
 
         } catch (Braintree_Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
+            $this->getLogger()->error('[Braintree exception][createCustomer] ' . $e->getMessage(), $e);
         }
 
         return $customer;
@@ -141,12 +144,15 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
             if ($result->success) {
                 $customer->setSubscriptionSynced(true);
+                $this->getLogger()->info('[Braintree][updateCustomer] Sucess', $result);
             }
-            else
+            else {
+                $this->getLogger()->error('[Braintree][updateCustomer] Error', $result->errors->deepAll());
                 $customer->setErrors($result->errors->deepAll());
+            }
 
         } catch (Braintree_Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
+            $this->getLogger()->error('[Braintree exception][updateCustomer] ' . $e->getMessage(), $e);
         }
 
 
@@ -176,12 +182,15 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             if ($result->success) {
                 $creditCard->setToken($result->creditCard->token);
                 $creditCard->setSubscriptionSynced(true);
+                $this->getLogger()->info('[Braintree][createCreditCard] Sucess', $result);
             }
-            else
+            else {
+                $this->getLogger()->error('[Braintree][createCreditCard] Error', $result->errors->deepAll());
                 $creditCard->setErrors($result->errors->deepAll());
+            }
 
         } catch (Braintree_Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
+            $this->getLogger()->error('[Braintree exception][createCreditCard] ' . $e->getMessage(), $e);
         }
         return $creditCard;
     }
@@ -209,12 +218,15 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
             if ($result->success) {
                 $creditCard->setSubscriptionSynced(true);
+                $this->getLogger()->info('[Braintree][updateCreditCard] Sucess', $result);
             }
-            else
+            else {
+                $this->getLogger()->error('[Braintree][updateCreditCard] Error', $result->errors->deepAll());
                 $creditCard->setErrors($result->errors->deepAll());
+            }
 
         } catch (Braintree_Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
+            $this->getLogger()->error('[Braintree exception][updateCreditCard] ' . $e->getMessage(), $e);
         }
 
         return $creditCard;
@@ -240,6 +252,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             );
 
             if($result->success) {
+                $this->getLogger()->info('[Braintree][createSubscription] Success', $result);
                 $subscription
                     ->setAdapterName($this->getAdapterName())
                     ->setSubscriptionId($result->subscription->id)
@@ -259,11 +272,13 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 }
 
             }
-            else
+            else {
+                $this->getLogger()->error('[Braintree][createSubscription] Error', $result->errors->deepAll());
                 $subscription->setErrors($result->errors->deepAll());
+            }
 
         } catch (Braintree_Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
+            $this->getLogger()->error('[Braintree exception][createSubscription] ' . $e->getMessage(), $e);
         }
 
         return $subscription;
@@ -295,13 +310,16 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $subscription
                     ->setSubscriptionSynced(true)
                     ->setStatus($result->subscription->status);
+                $this->getLogger()->info('[Braintree][updateSubscription] Sucess', $result);
             }
-            else
+            else {
+                $this->getLogger()->error('[Braintree][updateSubscription] Error', $result->errors->deepAll());
                 $subscription->setErrors($result->errors->deepAll());
+            }
 
 
         } catch (Braintree_Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
+            $this->getLogger()->error('[Braintree exception][updateSubscription] ' . $e->getMessage(), $e);
         }
 
         return $subscription;
@@ -321,13 +339,16 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $subscription
                     ->setSubscriptionSynced(true)
                     ->setStatus($result->subscription->status);
+                $this->getLogger()->info('[Braintree][cancelSubscription] Success', $result);
             }
-            else
+            else {
                 $subscription->setErrors($result->errors->deepAll());
+                $this->getLogger()->error('[Braintree][cancelSubscription] Error', $result->errors->deepAll());
+            }
 
 
         } catch (Braintree_Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
+            $this->getLogger()->error('[Braintree exception][cancelSubscription] ' . $e->getMessage(), $e);
         }
 
         return $subscription;
