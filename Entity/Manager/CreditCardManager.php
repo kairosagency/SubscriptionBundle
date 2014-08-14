@@ -94,4 +94,24 @@ class CreditCardManager
         $this->em->persist($creditCard);
         $this->em->flush();
     }
+
+    /**
+     * @param \Kairos\SubscriptionBundle\Model\CreditCard $creditCard
+     */
+    public function resetDefaultCreditCard(CreditCard $creditCard)
+    {
+        $qb = $this->repository->createQueryBuilder('cc');
+
+        $qb->update()
+            ->set('cc.default', $qb->expr()->literal(false))
+            ->where('cc.customer = :customer')
+            ->andWhere('cc != :creditcard')
+            ->setParameters(
+                array(
+                    'customer' => $creditCard->getCustomer(),
+                    'creditcard' => $creditCard,
+                )
+            );
+        $result = $qb->getQuery()->getResult();
+    }
 }

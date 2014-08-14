@@ -13,6 +13,7 @@ use Kairos\SubscriptionBundle\Model\Subscription;
 use Kairos\SubscriptionBundle\Model\Plan;
 
 use Braintree_Configuration,
+    Braintree_Exception,
     Braintree_Customer,
     Braintree_CreditCard,
     Braintree_Subscription,
@@ -110,8 +111,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             else
                 $customer->setErrors($result->errors->deepAll());
 
-        } catch (\Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage());
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
         }
 
         return $customer;
@@ -144,8 +145,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             else
                 $customer->setErrors($result->errors->deepAll());
 
-        } catch (\Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage());
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
         }
 
 
@@ -179,8 +180,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             else
                 $creditCard->setErrors($result->errors->deepAll());
 
-        } catch (\Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage());
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
         }
         return $creditCard;
     }
@@ -212,8 +213,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             else
                 $creditCard->setErrors($result->errors->deepAll());
 
-        } catch (\Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage());
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
         }
 
         return $creditCard;
@@ -261,8 +262,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             else
                 $subscription->setErrors($result->errors->deepAll());
 
-        } catch (\Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage());
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
         }
 
         return $subscription;
@@ -282,7 +283,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     {
         try {
             if ($subscription->getAdapterName() !== $this->getAdapterName()) {
-                throw new \Exception('Adapter mismatch');
+                throw new Braintree_Exception('Adapter mismatch');
             }
 
             $result = Braintree_Subscription::update(
@@ -299,8 +300,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $subscription->setErrors($result->errors->deepAll());
 
 
-        } catch (\Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage());
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
         }
 
         return $subscription;
@@ -311,7 +312,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     {
         try {
             if ($subscription->getAdapterName() !== $this->getAdapterName()) {
-                throw new \Exception('Adapter mismatch');
+                throw new Braintree_Exception('Adapter mismatch');
             }
 
             $result = Braintree_Subscription::cancel($subscription->getSubscriptionId());
@@ -325,8 +326,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $subscription->setErrors($result->errors->deepAll());
 
 
-        } catch (\Exception $e) {
-            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage());
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception] ' . $e->getMessage(), $e);
         }
 
         return $subscription;

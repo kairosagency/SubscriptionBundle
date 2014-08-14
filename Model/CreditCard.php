@@ -51,7 +51,7 @@ abstract class CreditCard extends Synced implements CreditCardInterface
      * @var boolean
      *
      */
-    protected $default;
+    protected $default = true;
 
     /**
      * Get id
