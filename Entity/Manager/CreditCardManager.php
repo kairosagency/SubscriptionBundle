@@ -1,7 +1,9 @@
 <?php
 namespace Kairos\SubscriptionBundle\Entity\Manager;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManager,
+    Doctrine\ORM\EntityRepository;
+
 use Kairos\SubscriptionBundle\Model\CreditCard;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -69,6 +71,26 @@ class CreditCardManager
      */
     public function save(CreditCard $creditCard)
     {
+        $this->em->persist($creditCard);
+        $this->em->flush();
+    }
+
+
+    /**
+     * @param \Kairos\SubscriptionBundle\Model\CreditCard $creditCard
+     */
+    public function saveAndResetDefaultCreditCard(CreditCard $creditCard)
+    {
+        $qb = $this->repository->createQueryBuilder('cc')
+            ->update('cc')
+            ->set('default', false)
+            ->where('cc.customer = :customer')
+            ->setParameters(
+                array(
+                    'customer' => $creditCard->getCustomer(),
+                )
+            );
+        $result = $qb->getQuery()->getResult();
         $this->em->persist($creditCard);
         $this->em->flush();
     }

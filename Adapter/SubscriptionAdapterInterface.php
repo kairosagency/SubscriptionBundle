@@ -15,35 +15,35 @@ interface SubscriptionAdapterInterface
 
     /****** plan adapter ********/
 
-    public function createPlan(Plan $plan);
+    public function createPlan(Plan $plan, $options = array());
 
-    public function getPlan(Plan $plan);
+    public function getPlan(Plan $plan, $options = array());
 
-    public function updatePlan(Plan $plan);
+    public function updatePlan(Plan $plan, $options = array());
 
-    public function deletePlan(Plan $plan);
+    public function deletePlan(Plan $plan, $options = array());
 
 
     /****** customer adapter ********/
 
-    public function createCustomer(Customer $customer);
+    public function createCustomer(Customer $customer, $options = array());
 
-    public function getCustomer(Customer $customer);
+    public function getCustomer(Customer $customer, $options = array());
 
-    public function updateCustomer(Customer $customer);
+    public function updateCustomer(Customer $customer, $options = array());
 
-    public function deleteCustomer(Customer $customer);
+    public function deleteCustomer(Customer $customer, $options = array());
 
 
     /****** credit card ********/
 
-    public function createCreditCard(CreditCard $creditCard);
+    public function createCreditCard(CreditCard $creditCard, $options = array());
 
-    public function getCreditCard(CreditCard $creditCard);
+    public function getCreditCard(CreditCard $creditCard, $options = array());
 
-    public function updateCreditCard(CreditCard $creditCard);
+    public function updateCreditCard(CreditCard $creditCard, $options = array());
 
-    public function deleteCreditCard(CreditCard $creditCard);
+    public function deleteCreditCard(CreditCard $creditCard, $options = array());
 
 
     /****** Subscriptions ********/

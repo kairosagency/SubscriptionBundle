@@ -14,11 +14,20 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "symfony/framework-bundle": ">=2.1,<=2.4",
+        "symfony/framework-bundle": "~2.1",
+        "symfony/form": "~2.1",
         "braintree/braintree_php" : "~2.27"
     },
     "require-dev": {
-        "phpunit/phpunit": "~3.7"
+        "twig/twig": "~1.5",
+        "doctrine/doctrine-bundle": "*",
+
+        "symfony/class-loader": "~2.3",
+        "symfony/yaml": "~2.3",
+        "symfony/finder": "~2.3",
+
+        "phpunit/phpunit": "~4.2",
+        "patchwork/dumper": "~1.2"
     },
     "autoload": {
         "psr-0": { "Kairos\\SubscriptionBundle": "" }

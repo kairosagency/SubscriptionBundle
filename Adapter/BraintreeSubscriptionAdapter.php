@@ -57,7 +57,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param Plan $plan
      * @return Plan
      */
-    public function createPlan(Plan $plan)
+    public function createPlan(Plan $plan, $options = array())
     {
         $plan->setSubscriptionSynced(true);
         return $plan;
@@ -67,7 +67,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param Plan $plan
      * @return Plan
      */
-    public function getPlan(Plan $plan)
+    public function getPlan(Plan $plan, $options = array())
     {
         return $plan;
     }
@@ -76,13 +76,13 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param Plan $plan
      * @return Plan
      */
-    public function updatePlan(Plan $plan)
+    public function updatePlan(Plan $plan, $options = array())
     {
         $plan->setSubscriptionSynced(true);
         return $plan;
     }
 
-    public function deletePlan(Plan $plan)
+    public function deletePlan(Plan $plan, $options = array())
     {
 
     }
@@ -95,11 +95,11 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param Customer $customer
      * @return Customer
      */
-    public function createCustomer(Customer $customer)
+    public function createCustomer(Customer $customer, $options = array())
     {
         try {
             $result = Braintree_Customer::create(
-                $this->serializeCustomer($customer)
+                $this->serializeCustomer($customer, $options)
             );
 
             if ($result->success) {
@@ -121,7 +121,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param Customer $customer
      * @return object
      */
-    public function getCustomer(Customer $customer)
+    public function getCustomer(Customer $customer, $options = array())
     {
         return Braintree_Customer::find($customer->getSubscriptionCustomerId());
     }
@@ -130,12 +130,12 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param Customer $customer
      * @return Customer
      */
-    public function updateCustomer(Customer $customer)
+    public function updateCustomer(Customer $customer, $options = array())
     {
         try {
             $result = Braintree_Customer::update(
                 $customer->getSubscriptionCustomerId(),
-                $this->serializeCustomer($customer)
+                $this->serializeCustomer($customer, $options)
             );
 
             if ($result->success) {
@@ -152,7 +152,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $customer;
     }
 
-    public function deleteCustomer(Customer $customer)
+    public function deleteCustomer(Customer $customer, $options = array())
     {
         return Braintree_Customer::delete($customer->getSubscriptionCustomerId());
     }
@@ -164,11 +164,11 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param CreditCard $creditCard
      * @return CreditCard
      */
-    public function createCreditCard(CreditCard $creditCard)
+    public function createCreditCard(CreditCard $creditCard, $options = array())
     {
         try {
             $result = Braintree_CreditCard::create(
-                $this->serializeCreditCard($creditCard)
+                $this->serializeCreditCard($creditCard, $options)
             );
 
             //var_dump($result);exit;
@@ -189,7 +189,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param CreditCard $creditCard
      * @return object
      */
-    public function getCreditCard(CreditCard $creditCard)
+    public function getCreditCard(CreditCard $creditCard, $options = array())
     {
         return Braintree_CreditCard::find($creditCard->getToken());
     }
@@ -198,12 +198,12 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param CreditCard $creditCard
      * @return CreditCard
      */
-    public function updateCreditCard(CreditCard $creditCard)
+    public function updateCreditCard(CreditCard $creditCard, $options = array())
     {
         try {
             $result = Braintree_CreditCard::update(
                 $creditCard->getToken(),
-                $this->serializeCustomer($creditCard)
+                $this->serializeCustomer($creditCard, $options)
             );
 
             if ($result->success) {
@@ -219,7 +219,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $creditCard;
     }
 
-    public function deleteCreditCard(CreditCard $creditCard)
+    public function deleteCreditCard(CreditCard $creditCard, $options = array())
     {
 
     }
@@ -235,7 +235,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     {
         try {
             $result = Braintree_Subscription::create(
-                array_merge($this->serializeSubscription($subscription), $options)
+                $this->serializeSubscription($subscription, $options)
             );
 
             if($result->success) {
@@ -287,7 +287,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
             $result = Braintree_Subscription::update(
                 $subscription->getSubscriptionId(),
-                array_merge($this->serializeSubscription($subscription), $options)
+                $this->serializeSubscription($subscription, $options)
             );
 
             if($result->success) {
@@ -398,7 +398,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
     /**** serialization helper ****/
 
-    public function serializeCustomer(Customer $customer)
+    public function serializeCustomer(Customer $customer, $options = array())
     {
         $result = array();
 
@@ -426,10 +426,14 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             $result['website'] = $customer->getWebsite();
         }
 
+        if (count($options) > 0) {
+            $result['options'] = $options;
+        }
+
         return $result;
     }
 
-    public function serializeCreditCard(CreditCard $creditCard)
+    public function serializeCreditCard(CreditCard $creditCard, $options = array())
     {
         $result = array();
 
@@ -453,10 +457,14 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             $result['cardholderName'] = $creditCard->getCardholderName();
         }
 
+        if (count($options) > 0) {
+            $result['options'] = $options;
+        }
+
         return $result;
     }
 
-    public function serializeSubscription(Subscription $subscription)
+    public function serializeSubscription(Subscription $subscription, $options = array())
     {
         $result = array();
 
@@ -467,9 +475,15 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         if ($subscription->getCustomer() && count($subscription->getCustomer()->getCreditCards()) > 0) {
             $cards = $subscription->getCustomer()->getCreditCards();
 
-            if ($cards[0]->getToken()) {
-                $result['paymentMethodToken'] = $cards[0]->getToken();
+            //set default credit card as default
+            foreach($cards as $card) {
+                if($card->isDefault())
+                    $result['paymentMethodToken'] = $card->getToken();
             }
+        }
+
+        if (count($options) > 0) {
+            $result['options'] = $options;
         }
 
         return $result;
