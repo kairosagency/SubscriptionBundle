@@ -46,6 +46,7 @@ class PlanConnectorSubscriber extends AbstractDoctrineListener
         foreach ($uow->getScheduledEntityUpdates() as $entity) {
             if($entity instanceof Plan) {
 
+                $changeset = $uow->getEntityChangeSet($entity);
                 $keys = array('amount', 'trialPeriod', 'trialPeriodUnit');
                 if($this->arrayHasKeys($changeset, $keys)) {
                     $entity->setSubscriptionSynced(false);
