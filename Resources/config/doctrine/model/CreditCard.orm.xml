@@ -8,7 +8,7 @@
 
         <field name="token" column="token" type="string" length="255" nullable="true" />
 
-        <field name="default" column="default_credit_card" type="boolean" nullable="true" />
+        <field name="defaultCreditCard" column="default_credit_card" type="boolean" nullable="true" />
 
     </mapped-superclass>
 

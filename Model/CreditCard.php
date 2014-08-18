@@ -51,7 +51,7 @@ abstract class CreditCard extends Synced implements CreditCardInterface
      * @var boolean
      *
      */
-    protected $default = true;
+    protected $defaultCreditCard;
 
     /**
      * Get id
@@ -208,9 +208,9 @@ abstract class CreditCard extends Synced implements CreditCardInterface
      * @param $default
      * @return $this
      */
-    public function setDefault($default)
+    public function setDefault($defaultCreditCard)
     {
-        $this->default = $default;
+        $this->defaultCreditCard = $defaultCreditCard;
 
         return $this;
     }
@@ -222,6 +222,6 @@ abstract class CreditCard extends Synced implements CreditCardInterface
      */
     public function isDefault()
     {
-        return $this->default;
+        return $this->defaultCreditCard;
     }
 } 
