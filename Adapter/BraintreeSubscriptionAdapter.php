@@ -112,9 +112,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 );
             }
             else {
-                $this->getLogger()->Error('[Braintree][createCustomer] Error',
-                    $result->errors->deepAll()
-                );
+                $this->getLogger()->Error('[Braintree][createCustomer] Error', (array) $result->errors->deepAll());
                 $customer->setErrors($result->errors->deepAll());
             }
 
@@ -154,7 +152,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->Error('[Braintree][createCustomer] Error',
-                    array_merge(array('customer id' => $customer->getId()), json_encode($result->errors->deepAll()))
+                    array_merge(array('customer id' => $customer->getId()), (array) $result->errors->deepAll())
                 );
                 $customer->setErrors($result->errors->deepAll());
             }
@@ -193,7 +191,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $this->getLogger()->info('[Braintree][createCreditCard] Sucess', $this->serializeCreditCard($creditCard, $options));
             }
             else {
-                $this->getLogger()->error('[Braintree][createCreditCard] Error', json_encode($result->errors->deepAll()));
+                $this->getLogger()->error('[Braintree][createCreditCard] Error', (array) $result->errors->deepAll());
                 $creditCard->setErrors($result->errors->deepAll());
             }
 
@@ -232,7 +230,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateCreditCard] Error',
-                    array_merge(array('creditcard id' => $creditCard->getId()), json_encode($result->errors->deepAll()))
+                    array_merge(array('creditcard id' => $creditCard->getId()), (array) $result->errors->deepAll())
                 );
                 $creditCard->setErrors($result->errors->deepAll());
             }
@@ -284,7 +282,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $this->getLogger()->info('[Braintree][createSubscription] Success', $this->serializeSubscription($subscription, $options));
             }
             else {
-                $this->getLogger()->error('[Braintree][createSubscription] Error', json_encode($result->errors->deepAll()));
+                $this->getLogger()->error('[Braintree][createSubscription] Error', (array) $result->errors->deepAll());
                 $subscription->setErrors($result->errors->deepAll());
             }
 
@@ -327,7 +325,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateSubscription] Error',
-                    array_merge(array('subscription id' => $subscription->getId()), json_encode($result->errors->deepAll()))
+                    array_merge(array('subscription id' => $subscription->getId()), (array) $result->errors->deepAll())
                 );
                 $subscription->setErrors($result->errors->deepAll());
             }
@@ -360,7 +358,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateSubscription] Error',
-                    array_merge(array('subscription id' => $subscription->getId()), json_encode($result->errors->deepAll()))
+                    array_merge(array('subscription id' => $subscription->getId()), (array) $result->errors->deepAll())
                 );
                 $subscription->setErrors($result->errors->deepAll());
             }
