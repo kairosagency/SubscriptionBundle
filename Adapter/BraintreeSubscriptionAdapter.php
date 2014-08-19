@@ -113,7 +113,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 );
             }
             else {
-                $this->getLogger()->Error('[Braintree][createCustomer] Error', Util::objectToArray($result->errors->deepAll()));
+                $this->getLogger()->Error('[Braintree][createCustomer] Error', Util::braintreeErrorsToArray($result->errors->deepAll()));
                 $customer->setErrors($result->errors->deepAll());
             }
 
@@ -153,7 +153,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->Error('[Braintree][createCustomer] Error',
-                    array_merge(array('customer id' => $customer->getId()), Util::objectToArray($result->errors->deepAll()))
+                    array_merge(array('customer id' => $customer->getId()), Util::braintreeErrorsToArray($result->errors->deepAll()))
                 );
                 $customer->setErrors($result->errors->deepAll());
             }
@@ -192,7 +192,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $this->getLogger()->info('[Braintree][createCreditCard] Sucess', $this->serializeCreditCard($creditCard, $options));
             }
             else {
-                $this->getLogger()->error('[Braintree][createCreditCard] Error', Util::objectToArray($result->errors->deepAll()));
+                var_dump(Util::braintreeErrorsToArray($result->errors->deepAll()));
+                $this->getLogger()->error('[Braintree][createCreditCard] Error', Util::braintreeErrorsToArray($result->errors->deepAll()));
                 $creditCard->setErrors($result->errors->deepAll());
             }
 
@@ -231,7 +232,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateCreditCard] Error',
-                    array_merge(array('creditcard id' => $creditCard->getId()), Util::objectToArray($result->errors->deepAll()))
+                    array_merge(array('creditcard id' => $creditCard->getId()), Util::braintreeErrorsToArray($result->errors->deepAll()))
                 );
                 $creditCard->setErrors($result->errors->deepAll());
             }
@@ -283,7 +284,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $this->getLogger()->info('[Braintree][createSubscription] Success', $this->serializeSubscription($subscription, $options));
             }
             else {
-                $this->getLogger()->error('[Braintree][createSubscription] Error', Util::objectToArray($result->errors->deepAll()));
+                $this->getLogger()->error('[Braintree][createSubscription] Error', Util::braintreeErrorsToArray($result->errors->deepAll()));
                 $subscription->setErrors($result->errors->deepAll());
             }
 
@@ -326,7 +327,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateSubscription] Error',
-                    array_merge(array('subscription id' => $subscription->getId()), Util::objectToArray($result->errors->deepAll()))
+                    array_merge(array('subscription id' => $subscription->getId()), Util::braintreeErrorsToArray($result->errors->deepAll()))
                 );
                 $subscription->setErrors($result->errors->deepAll());
             }
@@ -359,7 +360,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateSubscription] Error',
-                    array_merge(array('subscription id' => $subscription->getId()), Util::objectToArray($result->errors->deepAll()))
+                    array_merge(array('subscription id' => $subscription->getId()), Util::braintreeErrorsToArray($result->errors->deepAll()))
                 );
                 $subscription->setErrors($result->errors->deepAll());
             }

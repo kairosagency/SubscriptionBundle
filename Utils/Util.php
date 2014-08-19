@@ -14,18 +14,11 @@ class Util {
      * @param $d
      * @return array
      */
-    public static function objectToArray($d) {
-        if (is_object($d))
-            $d = get_object_vars($d);
-
+    public static function braintreeErrorsToArray($d) {
+        if($d instanceof \Braintree_Error_Validation) {
+            $d = array('attribute' => $d->attribute, 'code' => $d->code, 'message' => $d->message);
+        }
         return is_array($d) ? array_map(__METHOD__, $d) : $d;
     }
 
-    /**
-     * @param $d
-     * @return object
-     */
-    public static function arrayToObject($d) {
-        return is_array($d) ? (object) array_map(__METHOD__, $d) : $d;
-    }
-} 
+}
