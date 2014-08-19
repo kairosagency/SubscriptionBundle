@@ -83,7 +83,7 @@ class CreditCardManager
     {
         $qb = $this->repository->createQueryBuilder('cc')
             ->update('cc')
-            ->set('default', false)
+            ->set('defaultCreditCard', false)
             ->where('cc.customer = :customer')
             ->setParameters(
                 array(
@@ -103,7 +103,7 @@ class CreditCardManager
         $qb = $this->repository->createQueryBuilder('cc');
 
         $qb->update()
-            ->set('cc.default', $qb->expr()->literal(false))
+            ->set('cc.defaultCreditCard', $qb->expr()->literal(false))
             ->where('cc.customer = :customer')
             ->andWhere('cc != :creditcard')
             ->setParameters(
