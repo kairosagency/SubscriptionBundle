@@ -1,0 +1,14 @@
+kairos_subscription:
+    classes:
+        customer:       Kairos\SubscriptionBundle\Entity\Owner
+        plan:           Kairos\SubscriptionBundle\Entity\Plan
+        subscription:   Kairos\SubscriptionBundle\Entity\Subscription
+        credit_card:    Kairos\SubscriptionBundle\Entity\CreditCard
+        transaction:    Kairos\SubscriptionBundle\Entity\Transaction
+    adapter:
+        braintree:
+            environment:                  sandbox
+            merchant_id:                  012345
+            public_key:                   012345
+            private_key:                  012345
+            client_side_encryption_key:   012345
