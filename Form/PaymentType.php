@@ -38,12 +38,13 @@ class PaymentType extends AbstractType
                         )),
                     ),
                 ))
-            ->add('cardholder_name', 'text')
+            ->add('cardholder_name', 'text', array(
+                    'constraints' => array(
+                        new NotBlank(),
+                    ),
+                ))
             ->add('submit', 'submitbtn')
         ;
-
-
-
     }
 
     /**
@@ -58,7 +59,9 @@ class PaymentType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => $this->class
+                'number'        => '',
+                'cvv'           => '',
+                'data_class'    => $this->class
         ));
     }
 
