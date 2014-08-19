@@ -185,14 +185,12 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $this->serializeCreditCard($creditCard, $options)
             );
 
-            //var_dump($result);exit;
             if ($result->success) {
                 $creditCard->setToken($result->creditCard->token);
                 $creditCard->setSubscriptionSynced(true);
                 $this->getLogger()->info('[Braintree][createCreditCard] Sucess', $this->serializeCreditCard($creditCard, $options));
             }
             else {
-                var_dump(Util::braintreeErrorsToArray($result->errors->deepAll()));
                 $this->getLogger()->error('[Braintree][createCreditCard] Error', Util::braintreeErrorsToArray($result->errors->deepAll()));
                 $creditCard->setErrors($result->errors->deepAll());
             }
