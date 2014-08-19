@@ -11,6 +11,7 @@ use Kairos\SubscriptionBundle\Model\Customer;
 use Kairos\SubscriptionBundle\Model\CreditCard;
 use Kairos\SubscriptionBundle\Model\Subscription;
 use Kairos\SubscriptionBundle\Model\Plan;
+use Kairos\SubscriptionBundle\Utils\Util;
 
 use Braintree_Configuration,
     Braintree_Exception,
@@ -112,7 +113,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 );
             }
             else {
-                $this->getLogger()->Error('[Braintree][createCustomer] Error', $this->toArray($result->errors->deepAll()));
+                $this->getLogger()->Error('[Braintree][createCustomer] Error', Util::objectToArray($result->errors->deepAll()));
                 $customer->setErrors($result->errors->deepAll());
             }
 
@@ -152,7 +153,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->Error('[Braintree][createCustomer] Error',
-                    array_merge(array('customer id' => $customer->getId()), $this->toArray($result->errors->deepAll()))
+                    array_merge(array('customer id' => $customer->getId()), Util::objectToArray($result->errors->deepAll()))
                 );
                 $customer->setErrors($result->errors->deepAll());
             }
@@ -191,7 +192,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $this->getLogger()->info('[Braintree][createCreditCard] Sucess', $this->serializeCreditCard($creditCard, $options));
             }
             else {
-                $this->getLogger()->error('[Braintree][createCreditCard] Error', $this->toArray($result->errors->deepAll()));
+                $this->getLogger()->error('[Braintree][createCreditCard] Error', Util::objectToArray($result->errors->deepAll()));
                 $creditCard->setErrors($result->errors->deepAll());
             }
 
@@ -230,7 +231,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateCreditCard] Error',
-                    array_merge(array('creditcard id' => $creditCard->getId()), $this->toArray($result->errors->deepAll()))
+                    array_merge(array('creditcard id' => $creditCard->getId()), Util::objectToArray($result->errors->deepAll()))
                 );
                 $creditCard->setErrors($result->errors->deepAll());
             }
@@ -282,7 +283,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 $this->getLogger()->info('[Braintree][createSubscription] Success', $this->serializeSubscription($subscription, $options));
             }
             else {
-                $this->getLogger()->error('[Braintree][createSubscription] Error', $this->toArray($result->errors->deepAll()));
+                $this->getLogger()->error('[Braintree][createSubscription] Error', Util::objectToArray($result->errors->deepAll()));
                 $subscription->setErrors($result->errors->deepAll());
             }
 
@@ -325,7 +326,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateSubscription] Error',
-                    array_merge(array('subscription id' => $subscription->getId()), $this->toArray($result->errors->deepAll()))
+                    array_merge(array('subscription id' => $subscription->getId()), Util::objectToArray($result->errors->deepAll()))
                 );
                 $subscription->setErrors($result->errors->deepAll());
             }
@@ -358,7 +359,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
             }
             else {
                 $this->getLogger()->error('[Braintree][updateSubscription] Error',
-                    array_merge(array('subscription id' => $subscription->getId()), $this->toArray($result->errors->deepAll()))
+                    array_merge(array('subscription id' => $subscription->getId()), Util::objectToArray($result->errors->deepAll()))
                 );
                 $subscription->setErrors($result->errors->deepAll());
             }
@@ -526,11 +527,5 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         }
 
         return $result;
-    }
-
-
-    public function toArray($object)
-    {
-        return json_decode(json_encode($object), true);
     }
 }
