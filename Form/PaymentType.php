@@ -34,7 +34,7 @@ class PaymentType extends AbstractType
                     'constraints' => array(
                         new NotBlank(),
                         new Regex(array(
-                            'pattern' => '/^[0-3][0-9]\/(?:\d{4}|\d{2})/',
+                            'pattern' => '/^[0-3][0-9]\/(?:\d{4}|\d{2})$/',
                         )),
                     ),
                 ))
