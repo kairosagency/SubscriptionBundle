@@ -5,6 +5,8 @@ namespace Kairos\SubscriptionBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -20,13 +22,21 @@ class PaymentType extends AbstractType
         if($this->adapterName == 'braintree')
             $builder
                 ->add('number', 'encrypted_input')
-                ->add('cvv', 'encrypted_input', array('required' => false));
+                ->add('cvv', 'encrypted_input', array(
+                        'required' => false
+                    ));
 
         $builder
             ->add('expiration_date', 'text', array(
                     'attr' => array(
                         'placeholder' => 'MM/YY'
-                    )
+                    ),
+                    'constraints' => array(
+                        new NotBlank(),
+                        new Regex(array(
+                            'pattern' => '/^[0-3][0-9]\/(?:\d{4}|\d{2})/',
+                        )),
+                    ),
                 ))
             ->add('cardholder_name', 'text')
             ->add('submit', 'submitbtn')
