@@ -10,7 +10,7 @@ abstract class Synced implements SyncedInterface
      * @var boolean $subscriptionSynced
      *
      */
-    protected $subscriptionSynced;
+    protected $subscriptionSynced = false;
 
     /**
      * @var \DateTime $subscriptionSyncedTimestamp

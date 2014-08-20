@@ -10,6 +10,10 @@
 
         <field name="defaultCreditCard" column="default_credit_card" type="boolean" nullable="true" />
 
+        <field name="maskedNumber" column="masked_credit_card_number" type="string" length="255" nullable="true" />
+
+        <field name="expirationDate" column="credit_card_expiration_date" type="string" length="31" nullable="true" />
+
     </mapped-superclass>
 
 </doctrine-mapping>

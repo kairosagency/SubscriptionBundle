@@ -4,24 +4,13 @@ Namespace Kairos\SubscriptionBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
-abstract class CreditCard extends Synced implements CreditCardInterface
+abstract class CreditCard extends Payment implements CreditCardInterface
 {
-    /**
-     * @var integer
-     *
-     */
-    protected $id;
-
-    /**
-     * @var \Kairos\SubscriptionBundle\Model\CustomerInterface
-     */
-    protected $customer;
-
     /**
      * @var string
      *
      */
-    protected $token;
+    protected $maskedNumber;
 
     /**
      * @var string
@@ -48,66 +37,26 @@ abstract class CreditCard extends Synced implements CreditCardInterface
     protected $cardholderName;
 
     /**
-     * @var boolean
+     * Set masled number
      *
-     */
-    protected $defaultCreditCard;
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * set customer
-     *
-     * @param $customer
+     * @param $maskedNumber
      * @return $this
      */
-    public function setCustomer(\Kairos\SubscriptionBundle\Model\CustomerInterface $customer)
+    public function setMaskedNumber($maskedNumber)
     {
-        $this->customer = $customer;
+        $this->maskedNumber = $maskedNumber;
 
         return $this;
     }
 
     /**
-     * Get customer
-     *
-     * @return \Kairos\SubscriptionBundle\Model\CustomerInterface
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
-
-    /**
-     * Set token
-     *
-     * @param $token
-     * @return $this
-     */
-    public function setToken($token)
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-
-    /**
-     * Get token
+     * Get masked number
      *
      * @return string
      */
-    public function getToken()
+    public function getMaskedNumber()
     {
-        return $this->token;
+        return $this->maskedNumber;
     }
 
     /**
@@ -200,28 +149,5 @@ abstract class CreditCard extends Synced implements CreditCardInterface
     public function getCardholderName()
     {
         return $this->cardholderName;
-    }
-
-    /**
-     * Set default
-     *
-     * @param $default
-     * @return $this
-     */
-    public function setDefault($defaultCreditCard)
-    {
-        $this->defaultCreditCard = $defaultCreditCard;
-
-        return $this;
-    }
-
-    /**
-     * Get default
-     *
-     * @return boolean
-     */
-    public function isDefault()
-    {
-        return $this->defaultCreditCard;
     }
 } 

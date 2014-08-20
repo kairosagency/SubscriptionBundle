@@ -4,23 +4,26 @@ Namespace Kairos\SubscriptionBundle\Adapter;
 
 use Doctrine\ORM\EntityManager;
 
-use Kairos\SubscriptionBundle\Event\SubscriptionEvent;
 use Kairos\SubscriptionBundle\KairosSubscriptionEvents;
-use Kairos\SubscriptionBundle\Model\Transaction;
-use Kairos\SubscriptionBundle\Model\Customer;
-use Kairos\SubscriptionBundle\Model\CreditCard;
+use Kairos\SubscriptionBundle\Model\CreditCardInterface;
+use Kairos\SubscriptionBundle\Model\PaymentInterface;
 use Kairos\SubscriptionBundle\Model\Subscription;
-use Kairos\SubscriptionBundle\Model\Plan;
+use Kairos\SubscriptionBundle\Model\Transaction;
+use Kairos\SubscriptionBundle\Model\CustomerInterface;
+use Kairos\SubscriptionBundle\Model\SubscriptionInterface;
+use Kairos\SubscriptionBundle\Model\PlanInterface;
 use Kairos\SubscriptionBundle\Utils\Util;
 
 use Braintree_Configuration,
     Braintree_Exception,
     Braintree_Customer,
     Braintree_CreditCard,
+    Braintree_PaymentMethod,
     Braintree_Subscription,
+    Braintree_Transaction,
     Braintree_WebhookNotification;
 
-use Symfony\Bridge\Monolog\Logger;
+use Psr\Log\LoggerInterface\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -28,11 +31,17 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 {
     CONST ADAPTER_NAME = 'braintree';
 
+    /**
+     * @var string
+     */
     protected $transactionClass;
 
+    /**
+     * @var \Psr\Log\LoggerInterface\LoggerInterface
+     */
     private $logger;
 
-    public function __construct(Logger $logger, $environment, $merchantId, $publicKey, $privateKey, $transactionClass)
+    public function __construct(LoggerInterface $logger, $environment, $merchantId, $publicKey, $privateKey, $transactionClass)
     {
         Braintree_Configuration::environment($environment);
         Braintree_Configuration::merchantId($merchantId);
@@ -56,35 +65,38 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     /****** plan adapter ********/
 
     /**
-     * @param Plan $plan
-     * @return Plan
+     * @param PlanInterface $plan
+     * @param array $options
+     * @return PlanInterface
      */
-    public function createPlan(Plan $plan, $options = array())
+    public function createPlan(PlanInterface $plan, $options = array())
     {
         $plan->setSubscriptionSynced(true);
         return $plan;
     }
 
     /**
-     * @param Plan $plan
-     * @return Plan
+     * @param PlanInterface $plan
+     * @param array $options
+     * @return PlanInterface
      */
-    public function getPlan(Plan $plan, $options = array())
+    public function getPlan(PlanInterface $plan, $options = array())
     {
         return $plan;
     }
 
     /**
-     * @param Plan $plan
-     * @return Plan
+     * @param PlanInterface $plan
+     * @param array $options
+     * @return PlanInterface
      */
-    public function updatePlan(Plan $plan, $options = array())
+    public function updatePlan(PlanInterface $plan, $options = array())
     {
         $plan->setSubscriptionSynced(true);
         return $plan;
     }
 
-    public function deletePlan(Plan $plan, $options = array())
+    public function deletePlan(PlanInterface $plan, $options = array())
     {
 
     }
@@ -94,10 +106,11 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     /****** customer adapter ********/
 
     /**
-     * @param Customer $customer
-     * @return Customer
+     * @param CustomerInterface $customer
+     * @param array $options
+     * @return CustomerInterface
      */
-    public function createCustomer(Customer $customer, $options = array())
+    public function createCustomer(CustomerInterface $customer, $options = array())
     {
         try {
             $result = Braintree_Customer::create(
@@ -125,19 +138,21 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     }
 
     /**
-     * @param Customer $customer
+     * @param CustomerInterface $customer
+     * @param array $options
      * @return object
      */
-    public function getCustomer(Customer $customer, $options = array())
+    public function getCustomer(CustomerInterface $customer, $options = array())
     {
         return Braintree_Customer::find($customer->getSubscriptionCustomerId());
     }
 
     /**
-     * @param Customer $customer
-     * @return Customer
+     * @param CustomerInterface $customer
+     * @param array $options
+     * @return CustomerInterface
      */
-    public function updateCustomer(Customer $customer, $options = array())
+    public function updateCustomer(CustomerInterface $customer, $options = array())
     {
         try {
             $result = Braintree_Customer::update(
@@ -166,19 +181,45 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $customer;
     }
 
-    public function deleteCustomer(Customer $customer, $options = array())
+    /**
+     * @param CustomerInterface $customer
+     * @param array $options
+     * @return CustomerInterface
+     */
+    public function deleteCustomer(CustomerInterface $customer, $options = array())
     {
-        return Braintree_Customer::delete($customer->getSubscriptionCustomerId());
+        try {
+            $result = Braintree_Customer::delete($customer->getSubscriptionCustomerId());
+
+            if ($result->success) {
+                $customer->setSubscriptionSynced(false)->setSubscriptionCustomerId(null);
+                $this->getLogger()->info('[Braintree][deleteCustomer] Sucess',
+                    array('customer id' => $customer->getId())
+                );
+            }
+            else {
+                $this->getLogger()->Error('[Braintree][deleteCustomer] Error',
+                    array_merge(array('customer id' => $customer->getId()), Util::braintreeErrorsToArray($result->errors->deepAll()))
+                );
+                $customer->setErrors($result->errors->deepAll());
+            }
+
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception][deleteCustomer] ' . $e->getMessage());
+        }
+
+        return $customer;
     }
 
 
     /****** credit card ********/
 
     /**
-     * @param CreditCard $creditCard
-     * @return CreditCard
+     * @param CreditCardInterface $creditCard
+     * @param array $options
+     * @return CreditCardInterface
      */
-    public function createCreditCard(CreditCard $creditCard, $options = array())
+    public function createCreditCard(CreditCardInterface $creditCard, $options = array())
     {
         try {
             $result = Braintree_CreditCard::create(
@@ -201,20 +242,56 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $creditCard;
     }
 
+    /****** payments ********/
+
     /**
-     * @param CreditCard $creditCard
+     * @param PaymentInterface $creditCard
+     * @param array $options
+     * @return PaymentInterface
+     */
+    public function createPayment(PaymentInterface $payment, $options = array())
+    {
+        try {
+            $result = Braintree_PaymentMethod::create(
+                $this->serializePayment($payment, $options)
+            );
+
+            if ($result->success) {
+                $payment->setSubscriptionSynced(true)
+                    ->setToken($result->paymentMethod->token)
+                    ->setExpirationDate($result->paymentMethod->expirationDate)
+                    ->setMaskedNumber($result->paymentMethod->maskedNumber);
+
+                $this->getLogger()->info('[Braintree][createPayment] Sucess', $this->serializePayment($payment, $options));
+            }
+            else {
+                $this->getLogger()->error('[Braintree][createPayment] Error', Util::braintreeErrorsToArray($result->errors->deepAll()));
+                $payment->setErrors($result->errors->deepAll());
+            }
+
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception][createPayment] ' . $e->getMessage());
+        }
+
+        return $payment;
+    }
+
+    /**
+     * @param PaymentInterface $creditCard
+     * @param array $options
      * @return object
      */
-    public function getCreditCard(CreditCard $creditCard, $options = array())
+    public function getPayment(PaymentInterface $creditCard, $options = array())
     {
         return Braintree_CreditCard::find($creditCard->getToken());
     }
 
     /**
-     * @param CreditCard $creditCard
-     * @return CreditCard
+     * @param PaymentInterface $creditCard
+     * @param array $options
+     * @return PaymentInterface
      */
-    public function updateCreditCard(CreditCard $creditCard, $options = array())
+    public function updatePayment(PaymentInterface $creditCard, $options = array())
     {
         try {
             $result = Braintree_CreditCard::update(
@@ -242,19 +319,39 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $creditCard;
     }
 
-    public function deleteCreditCard(CreditCard $creditCard, $options = array())
+    public function deletePayment(PaymentInterface $payment, $options = array())
     {
+        try {
+            $result = Braintree_PaymentMethod::delete($payment->getToken());
+
+            if ($result->success) {
+                $payment->setSubscriptionSynced(false)->setToken(null);
+                $this->getLogger()->info('[Braintree][deletePaymentMethod] Sucess',
+                    array('payment id' => $payment->getId())
+                );
+            }
+            else {
+                $this->getLogger()->Error('[Braintree][deletePaymentMethod] Error',
+                    array_merge(array('payment id' => $payment->getId()), Util::braintreeErrorsToArray($result->errors->deepAll()))
+                );
+                $payment->setErrors($result->errors->deepAll());
+            }
+        } catch (Braintree_Exception $e) {
+            $this->getLogger()->error('[Braintree exception][deletePaymentMethod] ' . $e->getMessage());
+        }
+
+        return $payment;
 
     }
 
     /****** Subscriptions ********/
 
     /**
-     * @param Subscription $subscription
+     * @param SubscriptionInterface $subscription
      * @param array $options
-     * @return Subscription
+     * @return SubscriptionInterface
      */
-    public function createSubscription(Subscription $subscription, $options = array())
+    public function createSubscription(SubscriptionInterface $subscription, $options = array())
     {
         try {
             $result = Braintree_Subscription::create(
@@ -294,16 +391,21 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     }
 
     /**
-     * @param Subscription $subscription
+     * @param SubscriptionInterface $subscription
      * @param array $options
      * @return Braintree_Subscription
      */
-    public function getSubscription(Subscription $subscription, $options = array())
+    public function getSubscription(SubscriptionInterface $subscription, $options = array())
     {
         return Braintree_Subscription::find($subscription->getSubscriptionId());
     }
 
-    public function updateSubscription(Subscription $subscription, $options = array())
+    /**
+     * @param SubscriptionInterface $subscription
+     * @param array $options
+     * @return SubscriptionInterface
+     */
+    public function updateSubscription(SubscriptionInterface $subscription, $options = array())
     {
         try {
             if ($subscription->getAdapterName() !== $this->getAdapterName()) {
@@ -338,8 +440,12 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $subscription;
     }
 
-    //todo : check the result
-    public function cancelSubscription(Subscription $subscription, $options = array())
+    /**
+     * @param SubscriptionInterface $subscription
+     * @param array $options
+     * @return SubscriptionInterface
+     */
+    public function cancelSubscription(SubscriptionInterface $subscription, $options = array())
     {
         try {
             if ($subscription->getAdapterName() !== $this->getAdapterName()) {
@@ -371,9 +477,32 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $subscription;
     }
 
-    public function retryCharge(Subscription $subscription, $options = array())
-    {
 
+    /**
+     * @param SubscriptionInterface $subscription
+     * @param array $options
+     * @return SubscriptionInterface
+     */
+    public function retryCharge(SubscriptionInterface $subscription, $options = array())
+    {
+        $retryResult = Braintree_Subscription::retryCharge(
+            $subscription->getSubscriptionId()
+        );
+
+        if ($retryResult->success) {
+            $result = Braintree_Transaction::submitForSettlement(
+                $retryResult->transaction->id
+            );
+
+            // to check second result variable
+            $transactionRefl = new \ReflectionClass($this->transactionClass);
+            $transaction = $transactionRefl->newInstance();
+            $transaction
+                ->setSubscriptionTransactionId($result->id)
+                ->setSubscriptionTransactionStatus($result->status);
+        }
+
+        return $subscription;
     }
 
     /**** webhooks ****/
@@ -395,7 +524,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param $notification
      * @return null|string
      */
-    public function getSubscriptionEvent(Subscription $subscription, $notification)
+    public function getSubscriptionEvent(SubscriptionInterface $subscription, $notification)
     {
         $eventName = null;
 
@@ -430,6 +559,10 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $eventName;
     }
 
+    /**
+     * @param string $challenge
+     * @return string
+     */
     public function verifyWebhook($challenge)
     {
         return Braintree_WebhookNotification::verify($challenge);
@@ -437,7 +570,12 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
     /**** serialization helper ****/
 
-    public function serializeCustomer(Customer $customer, $options = array())
+    /**
+     * @param CustomerInterface $customer
+     * @param array $options
+     * @return array
+     */
+    public function serializeCustomer(CustomerInterface $customer, $options = array())
     {
         $result = array();
 
@@ -472,7 +610,36 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $result;
     }
 
-    public function serializeCreditCard(CreditCard $creditCard, $options = array())
+    /**
+     * @param PaymentInterface $payment
+     * @param array $options
+     * @return array
+     */
+    public function serializePayment(PaymentInterface $payment, $options = array())
+    {
+        $result = array();
+
+        if ($payment->getCustomer() && $payment->getCustomer()->getSubscriptionCustomerId()) {
+            $result['customerId'] = $payment->getCustomer()->getSubscriptionCustomerId();
+        }
+
+        if ($payment->getNonce()) {
+            $result['paymentMethodNonce'] = $payment->getNonce();
+        }
+
+        if (count($options) > 0) {
+            $result['options'] = $options;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param CreditCardInterface $creditCard
+     * @param array $options
+     * @return array
+     */
+    public function serializeCreditCard(CreditCardInterface $creditCard, $options = array())
     {
         $result = array();
 
@@ -503,7 +670,12 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
         return $result;
     }
 
-    public function serializeSubscription(Subscription $subscription, $options = array())
+    /**
+     * @param SubscriptionInterface $subscription
+     * @param array $options
+     * @return array
+     */
+    public function serializeSubscription(SubscriptionInterface $subscription, $options = array())
     {
         $result = array();
 

@@ -2,10 +2,10 @@
 
 Namespace Kairos\SubscriptionBundle\Adapter;
 
-use Kairos\SubscriptionBundle\Model\Customer;
-use Kairos\SubscriptionBundle\Model\CreditCard;
-use Kairos\SubscriptionBundle\Model\Subscription;
-use Kairos\SubscriptionBundle\Model\Plan;
+use Kairos\SubscriptionBundle\Model\CustomerInterface;
+use Kairos\SubscriptionBundle\Model\PaymentInterface;
+use Kairos\SubscriptionBundle\Model\SubscriptionInterface;
+use Kairos\SubscriptionBundle\Model\PlanInterface;
 
 interface SubscriptionAdapterInterface
 {
@@ -15,47 +15,47 @@ interface SubscriptionAdapterInterface
 
     /****** plan adapter ********/
 
-    public function createPlan(Plan $plan, $options = array());
+    public function createPlan(PlanInterface $plan, $options = array());
 
-    public function getPlan(Plan $plan, $options = array());
+    public function getPlan(PlanInterface $plan, $options = array());
 
-    public function updatePlan(Plan $plan, $options = array());
+    public function updatePlan(PlanInterface $plan, $options = array());
 
-    public function deletePlan(Plan $plan, $options = array());
+    public function deletePlan(PlanInterface $plan, $options = array());
 
 
     /****** customer adapter ********/
 
-    public function createCustomer(Customer $customer, $options = array());
+    public function createCustomer(CustomerInterface $customer, $options = array());
 
-    public function getCustomer(Customer $customer, $options = array());
+    public function getCustomer(CustomerInterface $customer, $options = array());
 
-    public function updateCustomer(Customer $customer, $options = array());
+    public function updateCustomer(CustomerInterface $customer, $options = array());
 
-    public function deleteCustomer(Customer $customer, $options = array());
-
-
-    /****** credit card ********/
-
-    public function createCreditCard(CreditCard $creditCard, $options = array());
-
-    public function getCreditCard(CreditCard $creditCard, $options = array());
-
-    public function updateCreditCard(CreditCard $creditCard, $options = array());
-
-    public function deleteCreditCard(CreditCard $creditCard, $options = array());
+    public function deleteCustomer(CustomerInterface $customer, $options = array());
 
 
-    /****** Subscriptions ********/
+    /****** payments ********/
 
-    public function createSubscription(Subscription $subscription, $options = array());
+    public function createPayment(PaymentInterface $payment, $options = array());
 
-    public function getSubscription(Subscription $subscription, $options = array());
+    public function getPayment(PaymentInterface $payment, $options = array());
 
-    public function updateSubscription(Subscription $subscription, $options = array());
+    public function updatePayment(PaymentInterface $payment, $options = array());
 
-    public function cancelSubscription(Subscription $subscription, $options = array());
+    public function deletePayment(PaymentInterface $payment, $options = array());
 
-    public function retryCharge(Subscription $subscription, $options = array());
+
+    /****** subscriptions ********/
+
+    public function createSubscription(SubscriptionInterface $subscription, $options = array());
+
+    public function getSubscription(SubscriptionInterface $subscription, $options = array());
+
+    public function updateSubscription(SubscriptionInterface $subscription, $options = array());
+
+    public function cancelSubscription(SubscriptionInterface $subscription, $options = array());
+
+    public function retryCharge(SubscriptionInterface $subscription, $options = array());
 
 } 

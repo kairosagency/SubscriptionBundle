@@ -3,7 +3,7 @@
 Namespace Kairos\SubscriptionBundle\Model;
 
 
-interface TransactionInterface
+interface TransactionInterface extends SyncedInterface
 {
     /**
      * Get id

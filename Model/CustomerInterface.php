@@ -9,7 +9,7 @@
 namespace Kairos\SubscriptionBundle\Model;
 
 
-interface CustomerInterface
+interface CustomerInterface extends SyncedInterface
 {
     /**
      * Get id

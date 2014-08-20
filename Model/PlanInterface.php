@@ -6,7 +6,7 @@ namespace Kairos\SubscriptionBundle\Model;
  * Plan interface
  *
  */
-interface PlanInterface
+interface PlanInterface extends SyncedInterface
 {
     /**
      * Get id

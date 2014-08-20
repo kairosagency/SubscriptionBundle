@@ -6,41 +6,19 @@ Namespace Kairos\SubscriptionBundle\Model;
 interface CreditCardInterface
 {
     /**
-     * Get id
+     * Set masled number
      *
-     * @return integer
-     */
-    public function getId();
-
-    /**
-     * Get subscription customer id
-     *
-     * @param $subscriptionCustomerId
+     * @param $maskedNumber
      * @return $this
      */
-    public function setCustomer(\Kairos\SubscriptionBundle\Model\CustomerInterface $customer);
+    public function setMaskedNumber($maskedNumber);
 
     /**
-     * Get customer
-     *
-     * @return \Kairos\SubscriptionBundle\Model\CustomerInterface
-     */
-    public function getCustomer();
-
-    /**
-     * Set token
-     *
-     * @param $token
-     * @return $this
-     */
-    public function setToken($token);
-
-    /**
-     * Get token
+     * Get masked number
      *
      * @return string
      */
-    public function getToken();
+    public function getMaskedNumber();
 
     /**
      * Set number
@@ -101,19 +79,4 @@ interface CreditCardInterface
      * @return string
      */
     public function getCardholderName();
-
-    /**
-     * Set default
-     *
-     * @param $default
-     * @return $this
-     */
-    public function setDefault($default);
-
-    /**
-     * Get default
-     *
-     * @return boolean
-     */
-    public function isDefault();
 } 
