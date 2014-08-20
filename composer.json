@@ -21,6 +21,7 @@
     "require-dev": {
         "twig/twig": "~1.5",
         "doctrine/doctrine-bundle": "*",
+        "doctrine/orm": "~2.3",
 
         "symfony/class-loader": "~2.3",
         "symfony/yaml": "~2.3",

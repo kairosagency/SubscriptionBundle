@@ -18,5 +18,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $processor = new Processor;
 
         $config = $processor->process($treeBuilder->buildTree(), $config);
+        $this->assertNotNull($config);
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./Tests/bootstrap.php" colors="true">
+    <php>
+        <!-- Put your sandbox account parameters here -->
+        <const name="MERCHANTID" value="mr4q6t2wvthm8h7v"/>
+        <const name="PUBLICKEY" value="x5f8vw2y49tjmqrf"/>
+        <const name="PRIVATEKEY" value="94c8b2d8bed6d83432479eaf54ff0606"/>
+    </php>
+    <testsuites>
+        <testsuite name="Kairos SubscriptionBundle test suite">
+            <directory suffix="Test.php">./Tests</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>./Resources</directory>t
+                <directory>./Tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

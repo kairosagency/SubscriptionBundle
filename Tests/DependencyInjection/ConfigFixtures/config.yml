@@ -1,6 +1,7 @@
+
 kairos_subscription:
     classes:
-        customer:       Kairos\SubscriptionBundle\Entity\Owner
+        customer:       Kairos\SubscriptionBundle\Entity\Customer
         plan:           Kairos\SubscriptionBundle\Entity\Plan
         subscription:   Kairos\SubscriptionBundle\Entity\Subscription
         credit_card:    Kairos\SubscriptionBundle\Entity\CreditCard
