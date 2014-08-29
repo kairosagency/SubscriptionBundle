@@ -10,7 +10,7 @@ class BraintreeSubscriptionAdapterTest extends \PHPUnit_Framework_TestCase {
 
 
     /**
-     * @var \Symfony\Component\HttpKernel\Log\LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
@@ -26,7 +26,7 @@ class BraintreeSubscriptionAdapterTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp()
     {
-        $this->logger = $this->getMock('Symfony\Component\HttpKernel\Log\LoggerInterface', array('info', 'error'));
+        $this->logger = $this->getMock('Psr\Log\LoggerInterface', array('info', 'error'));
 
         $this->logger->expects($this->any())
             ->method('info');

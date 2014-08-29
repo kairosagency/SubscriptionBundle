@@ -23,7 +23,7 @@ use Braintree_Configuration,
     Braintree_Transaction,
     Braintree_WebhookNotification;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -37,7 +37,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     protected $transactionClass;
 
     /**
-     * @var \Symfony\Component\HttpKernel\Log\LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger;
 
