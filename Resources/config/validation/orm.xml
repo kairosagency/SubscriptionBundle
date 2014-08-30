@@ -24,6 +24,9 @@
 
         <property name="email">
             <constraint name="Email">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
             </constraint>
             <constraint name="NotBlank">
                 <option name="groups">
@@ -34,6 +37,9 @@
 
         <property name="website">
             <constraint name="Url">
+                <option name="groups">
+                    <value>subscription</value>
+                </option>
             </constraint>
         </property>
 
