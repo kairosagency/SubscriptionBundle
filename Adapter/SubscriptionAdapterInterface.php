@@ -54,7 +54,7 @@ interface SubscriptionAdapterInterface
 
     public function updateSubscription(SubscriptionInterface $subscription, $options = array());
 
-    public function cancelSubscription(SubscriptionInterface $subscription, $options = array());
+    public function deleteSubscription(SubscriptionInterface $subscription, $options = array());
 
     public function retryCharge(SubscriptionInterface $subscription, $options = array());
 
