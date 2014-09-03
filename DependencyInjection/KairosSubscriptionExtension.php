@@ -142,6 +142,7 @@ class KairosSubscriptionExtension extends Extension
         );
 
         $adapter
+            ->addTag('monolog.logger', array('channel' => 'subscription_bundle'))
             ->setPublic(true);
 
         $this->container->setDefinition('kairos_subscription.subscription_adapter', $adapter);

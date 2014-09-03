@@ -25,12 +25,14 @@
         <service id="kairos_subscription.customer_subscriber" class="%kairos_subscription.customer_subscriber.class%" public="false">
             <argument type="service" id="kairos_subscription.subscription_adapter" />
             <argument  type="service" id="logger" />
+            <tag name="monolog.logger" channel="subscription_bundle" />
             <tag name="doctrine.event_subscriber"/>
         </service>
 
         <service id="kairos_subscription.plan_subscriber" class="%kairos_subscription.plan_subscriber.class%" public="false">
             <argument type="service" id="kairos_subscription.subscription_adapter" />
             <argument  type="service" id="logger" />
+            <tag name="monolog.logger" channel="subscription_bundle" />
             <tag name="doctrine.event_subscriber"/>
         </service>
 
