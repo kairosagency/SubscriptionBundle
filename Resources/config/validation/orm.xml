@@ -24,14 +24,16 @@
 
         <property name="email">
             <constraint name="Email">
-                <option name="groups">
-                    <value>subscription</value>
-                </option>
             </constraint>
             <constraint name="NotBlank">
                 <option name="groups">
                     <value>subscription</value>
                 </option>
+            </constraint>
+        </property>
+
+        <property name="website">
+            <constraint name="Url">
             </constraint>
         </property>
 

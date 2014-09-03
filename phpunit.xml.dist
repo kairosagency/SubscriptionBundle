@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="./Tests/bootstrap.php" colors="true">
+    <php>
+        <!-- Put your sandbox account parameters here -->
+        <const name="MERCHANTID" value="xxxxx"/>
+        <const name="PUBLICKEY" value="xxxxx"/>
+        <const name="PRIVATEKEY" value="xxxxx"/>
+    </php>
     <testsuites>
         <testsuite name="Kairos SubscriptionBundle test suite">
             <directory suffix="Test.php">./Tests</directory>
