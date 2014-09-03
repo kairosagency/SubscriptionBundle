@@ -65,12 +65,12 @@ class WebhookController extends Controller
                 $result .= "Subscription id" . chr(13) . $subscription->getId();
                 $result .= chr(13)."fin";
                 $this->get('logger')->info($result);
-                $message = \Swift_Message::newInstance()
+                /*$message = \Swift_Message::newInstance()
                     ->setSubject('braintree webhook')
                     ->setFrom('coucou@kairostag.com')
                     ->setTo('infra@kairostag.com')
                     ->setBody($result);
-                $this->get('mailer')->send($message);
+                $this->get('mailer')->send($message);*/
 
                 $eventName = $subscriptionAdapter->getSubscriptionEvent($subscription, $webhookNotification);
 
@@ -86,12 +86,12 @@ class WebhookController extends Controller
                 $result .= chr(13)."fin";
 
                 $this->get('logger')->info($result);
-                $message = \Swift_Message::newInstance()
+                /*$message = \Swift_Message::newInstance()
                     ->setSubject('braintree webhook')
                     ->setFrom('coucou@kairostag.com')
                     ->setTo('infra@kairostag.com')
                     ->setBody($result);
-                $this->get('mailer')->send($message);
+                $this->get('mailer')->send($message);*/
 
                 $this->get('logger')->error('[subscription bundle webhook] Could not find any subscription with id ' . $webhookNotification->subscription->id);
                 return new Response('nok', 200);
@@ -100,13 +100,13 @@ class WebhookController extends Controller
             return new Response('nok', 400);
         }
         else if($request->isMethod('GET')) {
-            $message = \Swift_Message::newInstance()
+            /*$message = \Swift_Message::newInstance()
                 ->setSubject('braintree webhook')
                 ->setFrom('coucou@kairostag.com')
                 ->setTo('infra@kairostag.com')
                 ->setBody('webhookcheck')
             ;
-            $this->get('mailer')->send($message);
+            $this->get('mailer')->send($message);*/
 
             return new Response($subscriptionAdapter->verifyWebhook($request->query->get('bt_challenge')));
         }
