@@ -2,6 +2,7 @@
 namespace Kairos\SubscriptionBundle\Tests\Adapter;
 
 use Kairos\SubscriptionBundle\Adapter\BraintreeSubscriptionAdapter;
+use Kairos\SubscriptionBundle\Model\Subscription;
 use Kairos\SubscriptionBundle\Tests\TestEntities;
 
 
@@ -90,7 +91,7 @@ class BraintreeSubscriptionAdapterTest extends \PHPUnit_Framework_TestCase {
      */
     public function testUpdateUser($customer)
     {
-        $customer->setFirstName('Alo')->setLastName('Boby');
+        $customer->setFirstName('Alo'.rand(0,1000))->setLastName('Boby'.rand(0,1000));
         $this->assertTrue($this->adapter->updateCustomer($customer)->isSubscriptionSynced());
         return $customer;
     }
@@ -104,7 +105,6 @@ class BraintreeSubscriptionAdapterTest extends \PHPUnit_Framework_TestCase {
         $payment->setCustomer($customer);
         $payment->setNonce(\Braintree_Test_Nonces::$transactable);
         $this->adapter->createPayment($payment);
-
 
         $this->assertTrue($payment->isSubscriptionSynced());
         $this->assertNotNull($payment->getToken());
@@ -124,16 +124,25 @@ class BraintreeSubscriptionAdapterTest extends \PHPUnit_Framework_TestCase {
         $plan = new TestEntities\PlanEntity();
         $subscription = new TestEntities\SubscriptionEntity();
 
-        $payment->setCustomer($customer);
-        $subscription->setCustomer($customer)->setPlan($plan);
-
+        $customer->addPayment($payment);
+        $subscription->setCustomer($customer);
+        $subscription->setPlan($plan);
         $subscription = $this->adapter->createSubscription($subscription);
 
-        var_dump($subscription->getErrors());
-        // weird issue triggered "Payment method token is invalid."
         $this->assertTrue($subscription->isSubscriptionSynced());
         $this->assertNotNull($subscription->getSubscriptionId());
 
+        return $subscription;
+    }
+
+    /**
+     * @depends testCreateSubscription
+     */
+    public function testDeleteSubscription($subscription)
+    {
+        $subscription = $this->adapter->deleteSubscription($subscription);
+        $this->assertFalse($subscription->isSubscriptionSynced());
+        $this->assertEquals(Subscription::CANCELED, $subscription->getStatus());
         return $subscription;
     }
 
@@ -160,6 +169,5 @@ class BraintreeSubscriptionAdapterTest extends \PHPUnit_Framework_TestCase {
         $this->assertNull($customer->getSubscriptionCustomerId());
         return $customer;
     }
-
 }
  

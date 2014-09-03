@@ -445,7 +445,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
      * @param array $options
      * @return SubscriptionInterface
      */
-    public function cancelSubscription(SubscriptionInterface $subscription, $options = array())
+    public function deleteSubscription(SubscriptionInterface $subscription, $options = array())
     {
         try {
             if ($subscription->getAdapterName() !== $this->getAdapterName()) {
@@ -456,7 +456,7 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
             if($result->success) {
                 $subscription
-                    ->setSubscriptionSynced(true)
+                    ->setSubscriptionSynced(false)
                     ->setStatus($result->subscription->status);
                 $this->getLogger()->info('[Braintree][updateSubscription] Sucess',
                     array_merge(array('subscription id' => $subscription->getId()), $this->serializeSubscription($subscription, $options))
@@ -468,7 +468,6 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
                 );
                 $subscription->setErrors($result->errors->deepAll());
             }
-
 
         } catch (Braintree_Exception $e) {
             $this->getLogger()->error('[Braintree exception][cancelSubscription] ' . $e->getMessage());
@@ -685,7 +684,8 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
 
         if ($subscription->getCustomer() && count($subscription->getCustomer()->getCreditCards()) > 0) {
             $cards = $subscription->getCustomer()->getCreditCards();
-
+            //In case there is no default card, take the first
+            $result['paymentMethodToken'] = $cards->first()->getToken();
             //set default credit card as default
             foreach($cards as $card) {
                 if($card->isDefault())
