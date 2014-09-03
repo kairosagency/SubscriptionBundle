@@ -141,6 +141,40 @@ abstract class Customer extends Synced implements CustomerInterface
     }
 
     /**
+     * Add payment
+     *
+     * @param \Kairos\SubscriptionBundle\Model\PaymentInterface $payment
+     * @return \Kairos\SubscriptionBundle\Model\CustomerInterface
+     */
+    public function addPayment(\Kairos\SubscriptionBundle\Model\PaymentInterface $payment)
+    {
+        $payment->setCustomer($this);
+        $this->creditCards[] = $payment;
+
+        return $this;
+    }
+
+    /**
+     * Remove Payment
+     *
+     * @param \Kairos\SubscriptionBundle\Model\PaymentInterface $Payment
+     */
+    public function removePayment(\Kairos\SubscriptionBundle\Model\PaymentInterface $payment)
+    {
+        $this->creditCards->removeElement($payment);
+    }
+
+    /**
+     * Get Payments
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPayments()
+    {
+        return $this->creditCards;
+    }
+
+    /**
      * Set subscription
      *
      * @param $subscription

@@ -41,6 +41,28 @@ interface CustomerInterface extends SyncedInterface
     public function getCreditCards();
 
     /**
+     * Add payment
+     *
+     * @param \Kairos\SubscriptionBundle\Model\PaymentInterface $payment
+     * @return \Kairos\SubscriptionBundle\Model\CustomerInterface
+     */
+    public function addPayment(\Kairos\SubscriptionBundle\Model\PaymentInterface $payment);
+
+    /**
+     * Remove Payment
+     *
+     * @param \Kairos\SubscriptionBundle\Model\PaymentInterface $Payment
+     */
+    public function removePayment(\Kairos\SubscriptionBundle\Model\PaymentInterface $payment);
+
+    /**
+     * Get Payments
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPayments();
+    
+    /**
      * Set subscription
      *
      * @param $subscription
