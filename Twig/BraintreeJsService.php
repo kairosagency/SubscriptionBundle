@@ -56,8 +56,8 @@ class BraintreeJsService extends \Twig_Extension {
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('getScript', 'getScript', array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('getScriptV2', 'getScriptV2', array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('getScript', array($this, 'getScript'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('getScriptV2', array($this, 'getScriptV2'), array('is_safe' => array('html'))),
         );
     }
 
