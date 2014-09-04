@@ -12,7 +12,7 @@ use Kairos\SubscriptionBundle\Adapter\BraintreeSubscriptionAdapter;
 use Kairos\SubscriptionBundle\Form\PaymentType;
 use Kairos\SubscriptionBundle\Model\CustomerInterface;
 
-class BraintreeJsService extends \Twig_Extension {
+class BraintreeJsService extends \Twig_Extension implements TwigJsService{
 
     /**
      * @var string client side encryption key
@@ -46,7 +46,7 @@ class BraintreeJsService extends \Twig_Extension {
      */
     public function getName()
     {
-        return 'braintree_js_extension';
+        return 'kairos_subscription_js_braintree';
     }
 
 
@@ -56,8 +56,9 @@ class BraintreeJsService extends \Twig_Extension {
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('getScript', array($this, 'getScript'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFunction('getScriptV2', array($this, 'getScriptV2'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('getSubscriptionJsScript', array($this, 'getSubscriptionJsScript'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('getBraintreeJsV1', array($this, 'getSubscriptionJsScript'), array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('getBraintreeJsV2', array($this, 'getBraintreeJsV2'), array('is_safe' => array('html'))),
         );
     }
 
@@ -65,7 +66,7 @@ class BraintreeJsService extends \Twig_Extension {
     /**
      * @return string
      */
-    public function getScript($formName = null) {
+    public function getSubscriptionJsScript($formName = null) {
 
         if(is_null($formName))
             $_formName = $this->formType->getName();
@@ -83,7 +84,7 @@ class BraintreeJsService extends \Twig_Extension {
     /**
      * @return string
      */
-    public function getScriptV2(CustomerInterface $customer, $formName = null) {
+    public function getBraintreeJsV2(CustomerInterface $customer, $formName = null) {
 
         if(is_null($formName))
             $_formName = $this->formType->getName();

@@ -14,11 +14,7 @@ interface TwigJsService {
     /**
      * @return string
      */
-    public function getScript();
+    public function getSubscriptionJsScript();
 
-    /**
-     * @return string
-     */
-    public function getScriptV2();
 }
 
