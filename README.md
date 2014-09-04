@@ -114,30 +114,37 @@ class Customer extends Kairos\SubscriptionBundle\Model\Customer
 
 etc ...
 
-## Twig functions
+## Twig extension
 
-If you want to use payment form js lib provided by Braintree, you've got to register this service as a global variable :
-
-```
-twig:
-     globals:
-         kairos_subscription_js: "@kairos_subscription.twig_js_service"
-```
-
-then you'll be able to use this function to add in your template the necessary js lib :
+If you want to use payment form js lib provided by Braintree, juste use this function in your template :
 
  ```
- {% autoescape false %}
- {{ kairos_subscription_js.getScript('your form id') }}
- {% endautoescape %}
+ {{ getBraintreeJsV1() }}
+ ```
+It will get your form id from the form type.
+
+In case you want to specify your own form id, just specify it in the function call
+
+ ```
+ {{ getBraintreeJsV1('#formid') }}
+ ```
+
+## Execute tests
+
+Setup a proper phpunit.xml from the dist file and add your own braintree sandbox parameters.
+Then execute :
+
+ ```
+ composer install --require-dev
+ bin/vendor/phpunit -v
  ```
 
 
 ## Todo
 
-* Add tests
+* Add tests (wip)
 * Add more validations
 * Add more subscription adapters (paymill ...)
 * Auto register relation mapping between entities
-* Simplify / refactore some stuff
+* Simplify / refactor some stuff
 * Multi subscription adapter support ?
