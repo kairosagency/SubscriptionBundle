@@ -6,9 +6,7 @@
         <form id="form" action="{{ path('kairos_subscription_payment', { 'customerId': customer.id }) }}" method="post" {{ form_enctype(form) }}>
             {{ form_widget(form) }}
         </form>
-        {% autoescape false %}
-        {{ kairos_subscription_js.getScript('form') }}
-        {% endautoescape %}
+        {{ getSubscriptionJsScript('form') }}
     </body>
 </html>
 

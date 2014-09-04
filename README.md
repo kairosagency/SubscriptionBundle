@@ -116,17 +116,17 @@ etc ...
 
 ## Twig extension
 
-If you want to use payment form js lib provided by Braintree, juste use this function in your template :
+If you want to use payment form js lib provided by Braintree (or any other provider in the future), juste use this function in your template :
 
  ```
- {{ getBraintreeJsV1() }}
+ {{ getSubscriptionJsScript() }}
  ```
 It will get your form id from the form type.
 
 In case you want to specify your own form id, just specify it in the function call
 
  ```
- {{ getBraintreeJsV1('#formid') }}
+ {{ getSubscriptionJsScript('#formid') }}
  ```
 
 ## Execute tests
