@@ -8,7 +8,6 @@
 
 namespace Kairos\SubscriptionBundle\Twig;
 
-use Kairos\SubscriptionBundle\Form\PaymentType;
 
 interface TwigJsService {
 
@@ -16,5 +15,10 @@ interface TwigJsService {
      * @return string
      */
     public function getScript();
+
+    /**
+     * @return string
+     */
+    public function getScriptV2();
 }
 

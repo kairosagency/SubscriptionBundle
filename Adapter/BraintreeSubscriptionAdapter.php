@@ -245,6 +245,16 @@ class BraintreeSubscriptionAdapter implements SubscriptionAdapterInterface
     /****** payments ********/
 
     /**
+     * @param CustomerInterface $customer
+     * @param array $options
+     * @return mixed
+     */
+    public function generateClientToken(CustomerInterface $customer, $options = array())
+    {
+        return Braintree_PaymentMethod::create(array("customerId" => $customer->getSubscriptionCustomerId()));
+    }
+
+    /**
      * @param PaymentInterface $creditCard
      * @param array $options
      * @return PaymentInterface

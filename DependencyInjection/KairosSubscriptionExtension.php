@@ -92,6 +92,7 @@ class KairosSubscriptionExtension extends Extension
             // register twig js service
             $this->addTwigJsService($adapter_name,
                 array(
+                    new Reference('kairos_subscription.subscription_adapter'),
                     $adapter[$adapter_name]['client_side_encryption_key'],
                 )
             );
@@ -159,6 +160,7 @@ class KairosSubscriptionExtension extends Extension
         );
 
         $jsService
+            ->addTag('twig.extension')
             ->setPublic(true);
 
         $this->container->setDefinition('kairos_subscription.twig_js_service', $jsService);
